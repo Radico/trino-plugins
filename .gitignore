@@ -1,0 +1,16 @@
+# SBT
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+.lib/
+.history
+.cache
+
+# IntelliJ IDEA
+.idea/
+stale_outputs_checked
+*.swp
+*.jar
