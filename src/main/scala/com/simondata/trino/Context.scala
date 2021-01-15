@@ -6,7 +6,7 @@ import com.simondata.util.Types
 import io.trino.spi.connector.{CatalogSchemaName, CatalogSchemaTableName}
 import io.trino.spi.security.SystemSecurityContext
 
-case class Org(name: String)
+case class Namespace(name: String)
 
 trait Resource {
   def category: String
@@ -138,10 +138,6 @@ object PluginContext {
     case _ => UnknownPlugin
   }
 }
-
-sealed abstract class OrgContext(val name: String)
-case object NoOrg extends OrgContext("NONE")
-case class NamedOrg(org: Org) extends OrgContext(org.name)
 
 case class MetricsContext(
   user: Option[String] = None,

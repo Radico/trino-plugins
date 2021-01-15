@@ -15,9 +15,9 @@ object Run extends App {
   private implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   val id = AuthIdUser("admin")
-  val org = Org("default") // TODO: convert to a namespace concept
+  val namespace = Namespace("default")
 
-  val logger = Logger.log(org)(PluginContext.forName("trino-events"))
+  val logger = Logger.log(namespace)(PluginContext.forName("trino-events"))
 
   def xrayClass(className: String): Unit = {
     val classInfo = XRay.reflectClassName(className)
