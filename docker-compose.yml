@@ -4,7 +4,6 @@ services:
     image: trinodb/trino:351
     volumes:
       - "./trino-config-docker/etc:/etc/trino"
-      - "./trino-config-docker/plugin/trino-auth:/usr/lib/trino/plugin/trino-auth"
       - "./trino-config-docker/plugin/trino-events:/usr/lib/trino/plugin/trino-events"
     ports:
       - "8080:8080"

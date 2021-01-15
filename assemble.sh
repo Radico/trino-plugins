@@ -16,7 +16,6 @@ SRC_PATH="target/scala-${SCALA_VERSION}/${ARTIFACT}"
 TRINO_VERSION=`echo $ARTIFACT | cut -d '-' -f 4`
 GIT_HASH=`echo $ARTIFACT | cut -d '-' -f 5 | cut -d '.' -f 1`
 
-AUTH_DST_PATH="trino-config-docker/plugin/trino-auth/trino-${TRINO_VERSION}-plugins.jar"
 EVENTS_DST_PATH="trino-config-docker/plugin/trino-events/trino-${TRINO_VERSION}-plugins.jar"
 
 DIRTY_MESSAGE=""
@@ -27,10 +26,6 @@ fi
 echo "Artifact name: ${ARTIFACT}"
 echo "Trino version: ${TRINO_VERSION}"
 echo "Git hash: ${GIT_HASH} ${DIRTY_MESSAGE}"
-
-rm $AUTH_DST_PATH
-echo "Copying artifact to docker config: ${SRC_PATH} -> ${AUTH_DST_PATH}"
-cp $SRC_PATH $AUTH_DST_PATH
 
 rm $EVENTS_DST_PATH
 echo "Copying artifact to docker config: ${SRC_PATH} -> ${EVENTS_DST_PATH}"
