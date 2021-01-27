@@ -81,6 +81,28 @@ The jar file will be written to `target/scala-2.13/trino-plugins-<trino-version>
 (marked `-dirty` if we do not have a clean working tree in git)
 
 
+## Local Docker
+
+Once the `assemble.sh` script has been used to generate the artifact (fat jar), a local Trino cluster can be started within Docker according to the included `docker-compose.yml` file.
+
+### Requirements
+
+- docker
+- docker-compose
+
+### Starting in Docker
+
+You can start via the simple wrapper script (listening on localhost:8080):
+```
+$ ./start-trino.sh
+```
+
+You can optionally change the port exposed for the coordinator (listening on localhost:8888):
+```
+$ TRINO_PORT=8888 ./start-trino.sh
+```
+
+
 ## Plugin Assembly
 
 - [Trino Plugins](https://trino.io/docs/current/develop/spi-overview.html)
@@ -94,11 +116,6 @@ There are a variety of requirements which must be met in order for a plugin to b
 - The file `event-listener.properties` must be defined in the trino `etc/` directory. The file must begin with the line `access-control.name=<plugin-name>`. In our case the first config line is `access-control.name=trino-events`.
 - Plugins must be loaded by all coordinators and workers.
 - The default location for plugins is `/usr/lib/trino/lib/plugin/`. This can be changed, but would then require that all plugins be relocated to the new plugin directory.
-
-
-## Wish List
-
-- Assert that methods defined on `SystemAcessControlStarburst` are a superset of those defined in `SystemAccessControl` by xraying both at runtime and comparing the generated `ClassInfo` structures.
 
 
 ## Links to Additional Resources

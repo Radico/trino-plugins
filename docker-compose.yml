@@ -6,4 +6,4 @@ services:
       - "./trino-config-docker/etc:/etc/trino"
       - "./trino-config-docker/plugin/trino-events:/usr/lib/trino/plugin/trino-events"
     ports:
-      - "8080:8080"
+      - "${TRINO_PORT:-8080}:8080"
