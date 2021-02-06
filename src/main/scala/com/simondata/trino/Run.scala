@@ -1,9 +1,8 @@
 package com.simondata.trino
 
-import java.util.Base64
 import java.util.concurrent.TimeUnit
 
-import com.simondata.util.{Aes, Config, Env, Http, HttpJson, HttpOptions, HttpResponse, Net, Slack, Time, XRay}
+import com.simondata.util.{Config, Env, Http, HttpJson, HttpOptions, HttpResponse, Net, Slack, Time, XRay}
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.duration.Duration
@@ -42,7 +41,6 @@ object Run extends App {
       case HttpResponse(status, body) => {
         println(s"[$status] $body")
       }
-    }
   }
 
   def runSlack(): Unit = {
@@ -56,24 +54,12 @@ object Run extends App {
         |with two lines?""".stripMargin)
     logger.fatal("Testing a fatal message\n...with two lines?")
 
-    logger.log(InfoLevel, "Sleeping to allow time for Slack message deliveries...", sendToSlack = Some(true))
+    logger.log(InfoLevel, _ => "Sleeping to allow time for Slack message deliveries...", sendToSlack = Some(true))
 
     // Wait for slack to send all messages
     Thread.sleep(3000)
 
     logger.info("Done.")
-  }
-
-  def runAes(): Unit = {
-    val plainText = "the flight of icarus"
-    val key = Aes.randomBytes(16)
-    val iv = Aes.randomBytes(16)
-    val cipherText = Aes.encrypt(plainText.getBytes("utf-8"), key, Some(iv)).get
-    val ctB64 = new String(Base64.getEncoder().encode(cipherText), "ascii")
-    println(s"base-64 cipher text: ${ctB64}")
-    val ptRestored = new String(Aes.decrypt(cipherText, key, Some(iv)).get, "utf-8")
-    println(s""""${plainText}" ?= "${ptRestored}"""")
-    assert(plainText == ptRestored)
   }
 
   def runTime(): Unit = {

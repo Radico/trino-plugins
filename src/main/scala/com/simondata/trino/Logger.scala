@@ -16,20 +16,39 @@ case object FatalLevel extends LogLevel("FATAL", 50)
 class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
   private implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
 
-  def trace(message: String): Unit = log(DebugLevel, message)
-  def info(message: String): Unit = log(InfoLevel, message)
-  def warn(message: String): Unit = log(WarnLevel, message)
-  def error(message: String): Unit = log(ErrorLevel, message)
-  def fatal(message: String): Unit = log(FatalLevel, message)
+  def trace(messageSupplier: Boolean => String): Unit = log(DebugLevel, messageSupplier)
+  def info(messageSupplier: Boolean => String): Unit = log(InfoLevel, messageSupplier)
+  def warn(messageSupplier: Boolean => String): Unit = log(WarnLevel, messageSupplier)
+  def error(messageSupplier: Boolean => String): Unit = log(ErrorLevel, messageSupplier)
+  def fatal(messageSupplier: Boolean => String): Unit = log(FatalLevel, messageSupplier)
+
+  def trace(message: String): Unit = log(DebugLevel, _ => message)
+  def info(message: String): Unit = log(InfoLevel, _ => message)
+  def warn(message: String): Unit = log(WarnLevel, _ => message)
+  def error(message: String): Unit = log(ErrorLevel, _ => message)
+  def fatal(message: String): Unit = log(FatalLevel, _ => message)
 
   def clusterName: String = Config.cluster.name
   def pluginName: String = pluginContext.name
 
+  /**
+   * This is the primary log function. It logs at the specified level, optionally forwarding
+   * the output of the messageSupplier to Slack.
+   *
+   * @param level The priority level (LogLevel)
+   * @param messageSupplier The message supplier function, which accepts a boolean to indicate whether
+   *                        the output supports rich content (Slack, in this case)
+   * @param sendToSlack An optional override to enforce whether or not the message is forwarded to slack
+   *                    instead of relying on the level to decide (Warn or higher by default)
+   * @param slackMessageColor The color of the attachment bar to the left of the Slack message
+   * @param slackLevelEmoji The emoji to display to the right of the level indicator in Slack
+   */
   def log(
     level: LogLevel,
-    message: String,
+    messageSupplier: Boolean => String,
     sendToSlack: Option[Boolean] = None,
-    slackMessageColor: Option[String] = None
+    slackMessageColor: Option[String] = None,
+    slackLevelEmoji: Option[String] = None
   ): Unit = {
     implicit val logLevel: LogLevel = level
 
@@ -39,11 +58,11 @@ class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
       case _ => false
     }
 
-    println(jsonMessage(message))
+    println(jsonMessage(messageSupplier(false)))
 
     if (notifySlack) {
       Future {
-        slackMessage(message, color=slackMessageColor)
+        slackMessage(messageSupplier(true), color = slackMessageColor, emoji = slackLevelEmoji)
       } flatMap {
         Slack.sendMessageAsync(_)
       } andThen {
@@ -71,18 +90,21 @@ class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
   def slackMessage(
     message: String,
     color: Option[String] = None,
+    emoji: Option[String] = None,
     fallbackMessage: Option[String] = None
   )(
     implicit level: LogLevel
   ): JsObject = {
-    val (messageColor: String, messageEmoji: String) = (color, level) match {
-      case (Some(c), _) => c
-      case (None, FatalLevel) => ("#7E57C2", ":skull:")
-      case (None, ErrorLevel) => ("#F44336", ":no_entry:")
-      case (None, WarnLevel) => ("#EB984E", ":warning:")
-      case (None, InfoLevel) => ("#888888", ":information_source:")
-      case (None, _) => ("#85C1E9", "")
+    val (defaultColor: String, defaultEmoji: String) = level match {
+      case FatalLevel => ("#7E57C2", ":skull:")
+      case ErrorLevel => ("#F44336", ":no_entry:")
+      case WarnLevel => ("#EB984E", ":warning:")
+      case InfoLevel => ("#888888", ":information_source:")
+      case _ => ("#85C1E9", "")
     }
+
+    val messageColor: String = color.getOrElse(defaultColor)
+    val messageEmoji: String = emoji.getOrElse(defaultEmoji)
 
     val meta = s"${Time.iso} | _${level.name}_ ${messageEmoji}"
     val summary = s"[*${pluginName}* | cluster:`${clusterName}` | `${identity}`]"

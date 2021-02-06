@@ -32,8 +32,9 @@ object Plugins {
 
       Logger.log.log(
         InfoLevel,
-        s":online: Trino ${nodeStr} started.\nInstance ID: `${idStr}`\nURL: ${url}",
-        sendToSlack = Some(Config.nodeType.isCoordinator)
+        _ => s":online: Trino ${nodeStr} started.\nInstance ID: `${idStr}`\nURL: ${url}",
+        sendToSlack = Some(Config.nodeType.isCoordinator),
+        slackMessageColor = Some("#00CC00")
       )
 
       initialized = true

@@ -21,6 +21,13 @@ object QueryStage {
   def from(event: QueryCompletedEvent): QueryStage = QueryEnd(QueryInfo.from(event))
 }
 
+/**
+ * Query failure summary.
+ *
+ * @param code a stable identifier for the failure (e.g., COLUMN_NOT_FOUND)
+ * @param message
+ * @param category a failure type (e.g., USER_ERROR, INTERNAL_ERROR)
+ */
 case class FailureInfo(
   code: String,
   message: Option[String],
@@ -222,7 +229,13 @@ class QueryEvents extends EventListener {
     queryStage: QueryStage,
     slackOverride: Option[Boolean] = None
   )(implicit log: Logger): Unit = Try {
-    val (logLevel: LogLevel, logMessage: Option[String], slackOverride: Option[Boolean]) = queryStage match {
+    val (
+      logLevel: LogLevel,
+      logMessage: Option[String],
+      slackOverride: Option[Boolean],
+      slackColor: Option[String],
+      slackEmoji: Option[String]
+    ) = queryStage match {
       case QueryStart(QueryInfo(_, _, time, Some(resource), Some(user), _, _, _)) => {
         val prefix = queryPrefix(queryStage.info)
         val logMessage: Option[String] = Config.logQueryCreated match {
@@ -234,7 +247,7 @@ class QueryEvents extends EventListener {
           )
         }
 
-        (InfoLevel, logMessage, Config.slackQueryCreated)
+        (InfoLevel, logMessage, Config.slackQueryCreated, None, None)
       }
       case QuerySplit(QueryInfo(_, _, time, _, _, _, None, _), stage, task) => {
         val prefix = queryPrefix(queryStage.info)
@@ -244,7 +257,7 @@ class QueryEvents extends EventListener {
           |completed split ${stage}.${task} (lasted _*${elapsed}*_)""".stripMargin
         )
 
-        (InfoLevel, logMessage, Config.slackSplitComplete)
+        (InfoLevel, logMessage, Config.slackSplitComplete, None, None)
       }
       case QuerySplit(QueryInfo(_, _, time, _, _, _, Some(FailureInfo(code, message, category)), _), stage, task) => {
         val prefix = queryPrefix(queryStage.info)
@@ -259,7 +272,7 @@ class QueryEvents extends EventListener {
           |${failureMessage}""".stripMargin
         )
 
-        (InfoLevel, logMessage, Config.slackSplitComplete)
+        (InfoLevel, logMessage, Config.slackSplitComplete, None, None)
       }
       case QueryEnd(QueryInfo(_, _, time, Some(resource), Some(user), _, None, _)) => {
         val prefix = queryPrefix(queryStage.info)
@@ -274,7 +287,7 @@ class QueryEvents extends EventListener {
           )
         }
 
-        (InfoLevel, logMessage, Config.slackQuerySuccess)
+        (InfoLevel, logMessage, Config.slackQuerySuccess, None, None)
       }
       case QueryEnd(QueryInfo(_, _, time, Some(resource), Some(user), _, Some(FailureInfo(code, message, category)), _)) => {
         val prefix = queryPrefix(queryStage.info)
@@ -293,13 +306,19 @@ class QueryEvents extends EventListener {
           )
         }
 
-        (WarnLevel, logMessage, Config.slackQueryFailure)
+        (WarnLevel, logMessage, Config.slackQueryFailure, None, None)
       }
-      case queryStage => (WarnLevel, s"""Unrecognized query stage: ${queryStage}""", None)
+      case queryStage => (WarnLevel, Some(s"""Unrecognized query stage: ${queryStage}"""), None, None, None)
     }
 
     // Log query info if a message was generated
-    logMessage foreach { log.log(logLevel, _, slackOverride) }
+    logMessage foreach { msg => log.log(
+      logLevel,
+      _ => msg,
+      sendToSlack = slackOverride,
+      slackMessageColor = slackColor,
+      slackLevelEmoji = slackEmoji
+    ) }
   } match {
     case Success(_) =>
     case Failure(error) => {

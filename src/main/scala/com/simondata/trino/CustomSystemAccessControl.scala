@@ -55,11 +55,13 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     val resource = authResult.query.resource
     val metaStr = meta.map(_.summary)getOrElse("")
 
+    def lockEmoji(slack: Boolean): String = if (slack) ":lock: " else ""
+
     (authResult, filtering) match {
-      case (AuthAllowed(_), true) => logger.info(s"Auth-Query [filtering] ${metaStr} ${id} ${action} ${resource} => ALLOWED")
-      case (AuthAllowed(_), false) => logger.info(s"Auth-Query ${metaStr} ${id} ${action} ${resource} => ALLOWED")
-      case (AuthDenied(_, reason), true) => logger.info(s"Auth-Query [filtering] ${metaStr} ${id} ${action} ${resource} => DENIED : ${reason}")
-      case (AuthDenied(_, reason), false) => logger.warn(s"Auth-Query ${metaStr} ${id} ${action} ${resource} => DENIED : ${reason}")
+      case (AuthAllowed(_), true) => logger.info(s => s"${lockEmoji(s)}Auth-Query [filtering] ${metaStr} ${id} ${action} ${resource} => ALLOWED")
+      case (AuthAllowed(_), false) => logger.info(s => s"${lockEmoji(s)}Auth-Query ${metaStr} ${id} ${action} ${resource} => ALLOWED")
+      case (AuthDenied(_, reason), true) => logger.info(s => s"${lockEmoji(s)}Auth-Query [filtering] ${metaStr} ${id} ${action} ${resource} => DENIED : ${reason}")
+      case (AuthDenied(_, reason), false) => logger.warn(s => s"${lockEmoji(s)}Auth-Query ${metaStr} ${id} ${action} ${resource} => DENIED : ${reason}")
     }
   }
 
