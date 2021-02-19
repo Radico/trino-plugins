@@ -13,15 +13,23 @@ case object WarnLevel extends LogLevel("WARNING", 30)
 case object ErrorLevel extends LogLevel("ERROR", 40)
 case object FatalLevel extends LogLevel("FATAL", 50)
 
+/**
+ * Unified logger which supports multiple outputs (stdout and Slack in its initial implementation).
+ *
+ * @param identity the identity to which the log message relates
+ * @param pluginContext the plugin which generated the log message
+ */
 class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
   private implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
 
+  // Convenience methods
   def trace(messageSupplier: Boolean => String): Unit = log(DebugLevel, messageSupplier)
   def info(messageSupplier: Boolean => String): Unit = log(InfoLevel, messageSupplier)
   def warn(messageSupplier: Boolean => String): Unit = log(WarnLevel, messageSupplier)
   def error(messageSupplier: Boolean => String): Unit = log(ErrorLevel, messageSupplier)
   def fatal(messageSupplier: Boolean => String): Unit = log(FatalLevel, messageSupplier)
 
+  // More convenience
   def trace(message: String): Unit = log(DebugLevel, _ => message)
   def info(message: String): Unit = log(InfoLevel, _ => message)
   def warn(message: String): Unit = log(WarnLevel, _ => message)
@@ -52,18 +60,22 @@ class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
   ): Unit = {
     implicit val logLevel: LogLevel = level
 
-    val notifySlack = (sendToSlack, Config.nodeType.isCoordinator, level.priority > InfoLevel.priority) match {
+    // Write to stdout
+    println(jsonMessage(messageSupplier(false)))
+
+    // Resolve whether a message should be delivered to Slack
+    val sendSlackMessage = (sendToSlack, Config.nodeType.isCoordinator, level.priority > InfoLevel.priority) match {
       case (Some(true), true, _) => true
       case (None, true, true) => true
       case _ => false
     }
 
-    println(jsonMessage(messageSupplier(false)))
-
-    if (notifySlack) {
+    if (sendSlackMessage) {
       Future {
+        // Generate the Slack message
         slackMessage(messageSupplier(true), color = slackMessageColor, emoji = slackLevelEmoji)
       } flatMap {
+        // Dispatch via webhook
         Slack.sendMessageAsync(_)
       } andThen {
         case Failure(e: SlackSendError) => println(s"Slack send failed: ${e.status} ${e.response}")
@@ -87,6 +99,20 @@ class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
     )
   }
 
+  /**
+   * Wrap the Slack message in a consistent format. This generates a Slack message using blocks for
+   * consistent structure and formatting. The message is in the form of an attachment, permitting
+   * the colored left bar.
+   *
+   *
+   * @param message the log message
+   * @param color an optional custom color for the bar to the left of the message
+   * @param emoji an optional custom emoji to display to the right of the timestamp and log level
+   * @param fallbackMessage an optional fallback message, which defaults to the full log message
+   * @param level the log level, which drives color and emoji if they were not customized
+   *
+   * @return a Play JSON object
+   */
   def slackMessage(
     message: String,
     color: Option[String] = None,

@@ -9,6 +9,9 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
 import scala.util.{Failure, Success, Try}
 
+/**
+ * Convenience object for running manual tests against various utilities.
+ */
 object Run extends App {
   private implicit val pc: PluginContext = LocalPlugin
   private implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
@@ -41,6 +44,7 @@ object Run extends App {
       case HttpResponse(status, body) => {
         println(s"[$status] $body")
       }
+    }
   }
 
   def runSlack(): Unit = {

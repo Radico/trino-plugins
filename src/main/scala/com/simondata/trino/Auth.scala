@@ -5,7 +5,7 @@ import java.security.Principal
 
 import io.trino.spi.security.SystemSecurityContext
 
-// Auth Identities
+// Auth Identities (who is trying to access/modify the resource)
 sealed abstract class AuthId(category: String) {
   def name: String
   override def toString(): String = s"id:${category}:${name}"
@@ -21,7 +21,7 @@ object AuthId {
   def unknown: AuthId = AuthIdUnknown
 }
 
-// Auth Actions
+// Auth Actions (what do they want to do to/with the resources)
 sealed abstract class AuthAction(name: String) {
   override def toString(): String = s"action:${name}"
 }
@@ -33,7 +33,7 @@ case object AuthActionUpdate extends AuthAction("update")
 case object AuthActionDelete extends AuthAction("delete")
 case object AuthActionExecute extends AuthAction("execute")
 
-// Auth Resources
+// Auth Resources (which resource are they trying to read/modify)
 sealed trait AuthResource {
   def resource: Resource
   override def toString(): String = s"resource:${resource.category}:${resource}"
@@ -70,7 +70,7 @@ case class AuthQuery(
 }
 
 
-// Auth Outcomes
+// Auth Outcomes (indicates whether action requested by an AuthQuery is permitted; and if not, why not)
 sealed abstract class AuthResult {
   def query: AuthQuery
 }
@@ -95,5 +95,12 @@ case class DenialException(reason: AccessDeniedException) extends DenialReason {
  */
 case class FilterRequest(id: AuthId, authQueries: List[AuthQuery])
 
-// Filter Outcome
+/**
+ * A full break-down of the results of an applied FilterRequest,
+ * partitioning into which AuthQueries were allowed and which were denied.
+ *
+ * @param request the request which this result answers
+ * @param allowed the queries which were allowed
+ * @param denied the queries which were denied
+ */
 case class FilterResult(request: FilterRequest, allowed: List[AuthResult], denied: List[AuthResult])

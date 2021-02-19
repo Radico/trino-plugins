@@ -13,14 +13,28 @@ import io.trino.spi.eventlistener.EventListener
 import io.trino.spi.security.AccessDeniedException.{denyAddColumn, denyCatalogAccess, denyCommentColumn, denyCommentTable, denyCreateSchema, denyCreateTable, denyCreateView, denyCreateViewWithSelect, denyDeleteTable, denyDropColumn, denyDropSchema, denyDropTable, denyDropView, denyExecuteFunction, denyExecuteProcedure, denyExecuteQuery, denyGrantExecuteFunctionPrivilege, denyGrantTablePrivilege, denyImpersonateUser, denyInsertTable, denyReadSystemInformationAccess, denyRenameColumn, denyRenameSchema, denyRenameTable, denyRenameView, denyRevokeTablePrivilege, denySelectColumns, denySetCatalogSessionProperty, denySetSchemaAuthorization, denySetSystemSessionProperty, denySetUser, denyShowColumns, denyShowCreateSchema, denyShowCreateTable, denyShowRoles, denyShowSchemas, denyShowTables, denyViewQuery, denyWriteSystemInformationAccess}
 import io.trino.spi.security.{TrinoPrincipal, Privilege, SystemAccessControl, SystemSecurityContext, ViewExpression}
 
+/**
+ * Custom metadata associated with a authorization check.
+ */
 trait AuthCheckMeta {
   def summary: String
 }
 
+/**
+ * Provides a mechanism for identifying which SystemAccessControl method
+ * originated a specific AuthQuery.
+ */
 case class CallerAuthCheckMeta(caller: String) extends AuthCheckMeta {
   override def summary: String = s"caller:${caller}"
 }
 
+/**
+ * This class is responsible for mapping SystemAccessControl to an implementation of TrinoAuth.
+ *
+ * This is initialized with your custom TrinoAuth implementation in the TrinoPlugins Java class.
+ *
+ * @param auth your selected/custom TrinoAuth implementation
+ */
 class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
   private implicit val pc: PluginContext = AuthPlugin
 
