@@ -73,51 +73,51 @@ object ConfigSupplier {
 
 object Config {
   val env = Env
-  lazy val props = Props.read("/etc/trino/cluster-info.properties")
+  val props = Props.read("/etc/trino/cluster-info.properties")
 
-  lazy val logQueryCreated: Option[Boolean] = {
+  val logQueryCreated: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_LOG_QUERY_CREATED")
       .orElse(props.getToggle("events.log.query_created"))
   }
 
-  lazy val logQuerySuccess: Option[Boolean] = {
+  val logQuerySuccess: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_LOG_QUERY_SUCCESS")
       .orElse(props.getToggle("events.log.query_success"))
   }
 
-  lazy val logQueryFailure: Option[Boolean] = {
+  val logQueryFailure: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_LOG_QUERY_FAILURE")
       .orElse(props.getToggle("events.log.query_failure"))
   }
 
-  lazy val logSplitComplete: Option[Boolean] = {
+  val logSplitComplete: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_LOG_SPLIT_COMPLETE")
       .orElse(props.getToggle("events.log.split_complete"))
   }
 
-  lazy val slackQueryCreated: Option[Boolean] = {
+  val slackQueryCreated: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_SLACK_QUERY_CREATED")
       .orElse(props.getToggle("events.slack.query_created"))
   }
 
-  lazy val slackQuerySuccess: Option[Boolean] = {
+  val slackQuerySuccess: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_SLACK_QUERY_SUCCESS")
       .orElse(props.getToggle("events.slack.query_success"))
   }
 
-  lazy val slackQueryFailure: Option[Boolean] = {
+  val slackQueryFailure: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_SLACK_QUERY_FAILURE")
       .orElse(props.getToggle("events.slack.query_failure"))
   }
 
-  lazy val slackSplitComplete: Option[Boolean] = {
+  val slackSplitComplete: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_SLACK_SPLIT_COMPLETE")
       .orElse(props.getToggle("events.slack.split_complete"))
@@ -128,7 +128,7 @@ object Config {
     .orElse(props.getToggle("auth.enforce"))
     .getOrElse(true)
 
-  lazy val environment: Environment = {
+  val environment: Environment = {
     env
       .getString("TRINO_PLUGINS_ENVIRONMENT")
       .orElse(props.getString("environment"))
@@ -138,17 +138,17 @@ object Config {
       }
   }
 
-  lazy val slackWebhook: Option[String] = env
+  val slackWebhook: Option[String] = env
     .getString("TRINO_PLUGINS_SLACK_WEBHOOK_URL")
     .orElse(props.getString("notifications.slack.webhook"))
 
   val mdUrl = "http://169.254.169.254/latest"
 
-  lazy val instanceId: Option[String] = Try(Http.get(s"${mdUrl}/meta-data/instance-id"))
+  val instanceId: Option[String] = Try(Http.get(s"${mdUrl}/meta-data/instance-id"))
     .toOption
     .map(_.body)
 
-  lazy val userData: Option[JsObject] = Try(Http.get(s"${mdUrl}/user-data"))
+  val userData: Option[JsObject] = Try(Http.get(s"${mdUrl}/user-data"))
     .toOption
     .map(_.body)
     .flatMap(txt => Try(Json.parse(txt)).toOption) match {
@@ -156,25 +156,25 @@ object Config {
       case _ => None
     }
 
-  lazy val cfConfig: Option[JsObject] = userData
+  val cfConfig: Option[JsObject] = userData
     .map(_("cft_configure")) match {
       case Some(obj: JsObject) => Some(obj)
       case _ => None
     }
 
-  lazy val coordinatorIp: Option[String] = cfConfig
+  val coordinatorIp: Option[String] = cfConfig
     .flatMap(_("coordinator_address") match {
       case JsString(address) => Some(address)
       case _ => None
     })
 
-  lazy val coordinatorPort: Option[Int] = cfConfig
+  val coordinatorPort: Option[Int] = cfConfig
     .flatMap(_("trino_http_port") match {
       case JsNumber(port) => Some(port.intValue)
       case _ => None
     })
 
-  lazy val cluster: ClusterContext = env
+  val cluster: ClusterContext = env
     .getString("TRINO_PLUGINS_CLUSTER")
     .orElse(props.getString("trino.cluster.name"))
     .orElse(cfConfig.map(_("cf_stack")) match {
@@ -185,7 +185,7 @@ object Config {
       case _ => UnknownCluster
     }
 
-  lazy val nodeType: NodeType = env
+  val nodeType: NodeType = env
     .getString("TRINO_PLUGINS_NODE_TYPE")
     .orElse(props.getString("trino.node.type"))
     .orElse(cfConfig.map(c => (c("coordinator"), c("worker"))) match {

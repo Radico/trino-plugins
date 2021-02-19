@@ -203,13 +203,12 @@ class QueryEventLogger extends QueryEventsListener {
   ): Future[Unit] = Future {
     // Only log split events if configured to do so (disabled by default)
     Config.logSplitComplete match {
-      case None =>
-      case Some(false) =>
       case Some(true) => {
         implicit val log = Logger.log(stage.info.authId)
         log.info(s"event-split-completed => ${stage.info.id}")
         logQueryInfo(stage, slackOverride = Config.slackSplitComplete)
       }
+      case _ =>
     }
   }
 
