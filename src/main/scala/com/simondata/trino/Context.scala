@@ -1,13 +1,19 @@
 package com.simondata.trino
 
-import java.security.Principal
-
 import com.simondata.util.Types
 import io.trino.spi.connector.{CatalogSchemaName, CatalogSchemaTableName}
 import io.trino.spi.security.SystemSecurityContext
 
+/**
+ * The general concept of a namespace. This is used in multiple places and is context-specific.
+ *
+ * @param name a unique namespace identifier
+ */
 case class Namespace(name: String)
 
+/**
+ * Represents a resource which may be involved in an AuthQuery.
+ */
 trait Resource {
   def category: String
 }
@@ -122,10 +128,20 @@ case object UnknownResource extends Resource {
   override def toString: String = "unknown-resource"
 }
 
+/**
+ * Context to help identify the cluster in logs/notifications.
+ *
+ * @param name a name which uniquely identifies the cluster within your infrastructure
+ */
 sealed abstract class ClusterContext(val name: String)
 case object UnknownCluster extends ClusterContext("UNKNOWN")
 case class NamedCluster(clusterName: String) extends ClusterContext(clusterName)
 
+/**
+ * Context identifying the plugin from which a log/notification message originated.
+ *
+ * @param name the name of the plugin
+ */
 sealed abstract class PluginContext(val name: String)
 case object UnknownPlugin extends PluginContext("trino-plugins")
 case object LocalPlugin extends PluginContext("trino-local")
@@ -138,21 +154,3 @@ object PluginContext {
     case _ => UnknownPlugin
   }
 }
-
-case class MetricsContext(
-  user: Option[String] = None,
-  principal: Option[Principal] = None,
-  securityContext: Option[SystemSecurityContext] = None
-) {
-  def withUser(user: String): MetricsContext = this.copy(user = Some(user))
-  def withPrincipal(principal: Principal): MetricsContext = this.copy(principal = Some(principal))
-  def withSecurityContext(securityContext: SystemSecurityContext): MetricsContext = this.copy(securityContext = Some(securityContext))
-}
-
-object MetricsContext {
-  def empty: MetricsContext = MetricsContext()
-  def forUser(user: String): MetricsContext = MetricsContext.empty.withUser(user)
-  def forPrincipal(principal: Principal): MetricsContext = MetricsContext.empty.withPrincipal(principal)
-  def forSecurityContext(securityContext: SystemSecurityContext): MetricsContext = MetricsContext.empty.withSecurityContext(securityContext)
-}
-

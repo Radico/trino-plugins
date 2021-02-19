@@ -2,6 +2,8 @@ version: "3.7"
 services:
   trino:
     image: trinodb/trino:351
+    env_file:
+      - .dockerenv
     volumes:
       - "./trino-config-docker/etc:/etc/trino"
       - "./trino-config-docker/plugin/trino-events:/usr/lib/trino/plugin/trino-events"

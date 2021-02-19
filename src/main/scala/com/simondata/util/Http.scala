@@ -31,6 +31,9 @@ case class HttpOptions(
   def withMethod(method: HttpMethod): HttpOptions = this.copy(method)
 }
 
+/**
+ * Simple wrapper around native Java HTTP requests via java.net.URL
+ */
 object Http {
   def get(url: String, options: HttpOptions = HttpOptions()): HttpResponse = request(url, options.withMethod(HttpGet))
   def post(url: String, options: HttpOptions = HttpOptions()): HttpResponse = request(url, options.withMethod(HttpPost))
@@ -76,6 +79,12 @@ object Http {
     HttpResponse(statusCode, content)
   }
 
+  /**
+   * Asynchronous versions of top-level methods.
+   *
+   * WARNING: Since the underlying Java implementation is synchronous,
+   * these end up blocking the thread in which they run.
+   */
   object async {
     def get(
       url: String,

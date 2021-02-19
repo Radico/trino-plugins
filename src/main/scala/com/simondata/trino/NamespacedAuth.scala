@@ -1,5 +1,19 @@
 package com.simondata.trino
 
+/**
+ * Example implementation of TrinoAuth which uses a simple schema naming convention
+ * to validate whether a user is permitted work with schemas prefixed with `<namespace>_`.
+ *
+ * The example goes beyond just enforcing permissions based on the namespace. There are also
+ * exmaples of shared schemas, read-only access to metadata tables, controls on which session
+ * properties users may set, additional access permitted for the `root` and `admin` users.
+ *
+ * WARNING: This is meant to be a starting point for your own custom auth. While you can
+ *          use this implementation as is, there are not guarantees regarding its
+ *          compatibility with the needs of your cluster and clients.
+ *
+ * @param namespace the namespace prefix for schemas to which access should be moderated
+ */
 class NamespacedAuth(val namespace: String) extends TrinoAuth {
   def messages = TrinoAuth.messages
 

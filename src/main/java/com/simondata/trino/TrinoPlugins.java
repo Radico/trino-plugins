@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.lang.Iterable;
 
+/**
+ * The entry point for all plugins. There is a factory for each plugin below.
+ */
 public class TrinoPlugins implements Plugin {
     private SystemAccessControlFactory systemAccessControlFactory = new SACFactory();
     private java.util.List<SystemAccessControlFactory> systemAccessControlFactories = new LinkedList<>();
@@ -42,7 +45,7 @@ public class TrinoPlugins implements Plugin {
         public SystemAccessControl create(Map<String, String> config) {
             this.init();
 
-            // Set this to your custom TrinoAuth implementation
+            // NOTE: Set this to your custom TrinoAuth implementation
             TrinoAuth authImpl = new NamespacedAuth("simon");
 
             return new CustomSystemAccessControl(authImpl);
@@ -61,6 +64,8 @@ public class TrinoPlugins implements Plugin {
         public EventListener create(Map<String, String> config) {
             this.init();
 
+            // NOTE: Specify all custom QueryEventsListener implementations in
+            //       the instance() method called here.
             return QueryEvents.instance();
         }
     }

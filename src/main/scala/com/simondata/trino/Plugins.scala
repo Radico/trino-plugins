@@ -4,13 +4,18 @@ import com.simondata.util.{ClassInfo, Config, Net, XRay}
 
 import scala.util.{Failure, Success, Try}
 
+/**
+ * Plugin initialization.
+ */
 object Plugins {
   private implicit val pc: PluginContext = AuthPlugin
   private var initialized = false
 
   def init(): Unit = synchronized {
     if (!initialized) {
-      // Starburst has differed from the open source version in the past
+      // Starburst has differed from the open source version in the past.
+      // Dump out full class signatures on multiple log lines so we can compare
+      // what exists in the runtime with what we expect for our plugin version.
       println("Inspecting SPI classes...")
       xrayClass("io.trino.spi.Plugin")
       xrayClass("io.trino.spi.security.SystemAccessControl")
@@ -28,8 +33,11 @@ object Plugins {
         case _ => "NO_URL"
       }
 
+      // List the IP addresses associated with this coordinator
+      // (will not be sent to Slack as this is info level).
       Logger.log.info(s"Trino ${nodeStr} IPs: ${ipStr}")
 
+      // Report the new coordinator (force Slack message).
       Logger.log.log(
         InfoLevel,
         _ => s":online: Trino ${nodeStr} started.\nInstance ID: `${idStr}`\nURL: ${url}",

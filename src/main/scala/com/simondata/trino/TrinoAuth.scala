@@ -1,5 +1,9 @@
 package com.simondata.trino
 
+/**
+ * Custom authorization implementations should extend this trait.
+ * The default example is NamespacedAuth.
+ */
 trait TrinoAuth {
   /**
    * Evaluate an AuthQuery. Is the identity permitted to apply the action to the resource.
