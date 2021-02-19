@@ -77,60 +77,60 @@ object Config {
 
   lazy val logQueryCreated: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_LOG_QUERY_CREATED")
+      .getToggle("TRINO_PLUGINS_LOG_QUERY_CREATED")
       .orElse(props.getToggle("events.log.query_created"))
   }
 
   lazy val logQuerySuccess: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_LOG_QUERY_SUCCESS")
+      .getToggle("TRINO_PLUGINS_LOG_QUERY_SUCCESS")
       .orElse(props.getToggle("events.log.query_success"))
   }
 
   lazy val logQueryFailure: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_LOG_QUERY_FAILURE")
+      .getToggle("TRINO_PLUGINS_LOG_QUERY_FAILURE")
       .orElse(props.getToggle("events.log.query_failure"))
   }
 
   lazy val logSplitComplete: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_LOG_SPLIT_COMPLETE")
+      .getToggle("TRINO_PLUGINS_LOG_SPLIT_COMPLETE")
       .orElse(props.getToggle("events.log.split_complete"))
   }
 
   lazy val slackQueryCreated: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_SLACK_QUERY_CREATED")
+      .getToggle("TRINO_PLUGINS_SLACK_QUERY_CREATED")
       .orElse(props.getToggle("events.slack.query_created"))
   }
 
   lazy val slackQuerySuccess: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_SLACK_QUERY_SUCCESS")
+      .getToggle("TRINO_PLUGINS_SLACK_QUERY_SUCCESS")
       .orElse(props.getToggle("events.slack.query_success"))
   }
 
   lazy val slackQueryFailure: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_SLACK_QUERY_FAILURE")
+      .getToggle("TRINO_PLUGINS_SLACK_QUERY_FAILURE")
       .orElse(props.getToggle("events.slack.query_failure"))
   }
 
   lazy val slackSplitComplete: Option[Boolean] = {
     env
-      .getToggle("TRINO_AUTH_SLACK_SPLIT_COMPLETE")
+      .getToggle("TRINO_PLUGINS_SLACK_SPLIT_COMPLETE")
       .orElse(props.getToggle("events.slack.split_complete"))
   }
 
   def enforceAuth: Boolean = env
-    .getToggle("TRINO_AUTH_ENFORCE_AUTH")
+    .getToggle("TRINO_PLUGINS_ENFORCE_AUTH")
     .orElse(props.getToggle("auth.enforce"))
     .getOrElse(true)
 
   lazy val environment: Environment = {
     env
-      .getString("TRINO_AUTH_ENVIRONMENT")
+      .getString("TRINO_PLUGINS_ENVIRONMENT")
       .orElse(props.getString("environment"))
       .getOrElse(ProdEnvironment.name) match {
         case DevEnvironment.name => DevEnvironment
@@ -139,7 +139,7 @@ object Config {
   }
 
   lazy val slackWebhook: Option[String] = env
-    .getString("TRINO_AUTH_SLACK_WEBHOOK_URL")
+    .getString("TRINO_PLUGINS_SLACK_WEBHOOK_URL")
     .orElse(props.getString("notifications.slack.webhook"))
 
   val mdUrl = "http://169.254.169.254/latest"
@@ -175,7 +175,7 @@ object Config {
     })
 
   lazy val cluster: ClusterContext = env
-    .getString("TRINO_AUTH_CLUSTER")
+    .getString("TRINO_PLUGINS_CLUSTER")
     .orElse(props.getString("trino.cluster.name"))
     .orElse(cfConfig.map(_("cf_stack")) match {
       case Some(JsString(clusterName)) => Some(clusterName)
@@ -186,7 +186,7 @@ object Config {
     }
 
   lazy val nodeType: NodeType = env
-    .getString("TRINO_AUTH_NODE_TYPE")
+    .getString("TRINO_PLUGINS_NODE_TYPE")
     .orElse(props.getString("trino.node.type"))
     .orElse(cfConfig.map(c => (c("coordinator"), c("worker"))) match {
       case Some((JsBoolean(true), JsBoolean(false))) => Some("coordinator")
