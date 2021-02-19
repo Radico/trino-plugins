@@ -3,9 +3,7 @@ package com.simondata.trino
 import java.time.{Duration, Instant}
 import scala.jdk.CollectionConverters._
 import com.simondata.util.{Config, Time, Types, XRay}
-import io.trino.spi.ErrorCode
 import io.trino.spi.eventlistener.{EventListener, QueryCompletedEvent, QueryContext, QueryCreatedEvent, SplitCompletedEvent}
-import io.trino.spi.resourcegroups.QueryType
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -20,13 +18,13 @@ import scala.util.{Failure, Success, Try}
 sealed trait QueryStage {
   def info: QueryInfo
 }
-case class QueryStart(info: QueryInfo) extends QueryStage
-case class QuerySplit(info: QueryInfo, stage: String, task: String) extends QueryStage
-case class QueryEnd(info: QueryInfo) extends QueryStage
+case class QueryStart(info: QueryInfo, event: QueryCreatedEvent) extends QueryStage
+case class QuerySplit(info: QueryInfo, stage: String, task: String, event: SplitCompletedEvent) extends QueryStage
+case class QueryEnd(info: QueryInfo, event: QueryCompletedEvent) extends QueryStage
 object QueryStage {
-  def from(event: QueryCreatedEvent): QueryStage = QueryStart(QueryInfo.from(event))
-  def from(event: SplitCompletedEvent): QueryStage = QuerySplit(QueryInfo.from(event), event.getStageId, event.getTaskId)
-  def from(event: QueryCompletedEvent): QueryStage = QueryEnd(QueryInfo.from(event))
+  def from(event: QueryCreatedEvent): QueryStart = QueryStart(QueryInfo.from(event), event)
+  def from(event: SplitCompletedEvent): QuerySplit = QuerySplit(QueryInfo.from(event), event.getStageId, event.getTaskId, event)
+  def from(event: QueryCompletedEvent): QueryEnd = QueryEnd(QueryInfo.from(event), event)
 }
 
 /**
@@ -180,24 +178,26 @@ object QueryInfo {
  * Implement this trait and add to QueryEvents.instance() below to add custom query event handling.
  */
 trait QueryEventsListener {
-  def queryStart(stage: QueryStage)(implicit ec: ExecutionContext, pc: PluginContext): Future[Unit]
-  def splitEnd(stage: QueryStage)(implicit ec: ExecutionContext, pc: PluginContext): Future[Unit]
-  def queryEnd(stage: QueryStage)(implicit ec: ExecutionContext, pc: PluginContext): Future[Unit]
+  def queryStart(stage: QueryStart)(implicit ec: ExecutionContext, pc: PluginContext): Future[Unit]
+  def splitEnd(stage: QuerySplit)(implicit ec: ExecutionContext, pc: PluginContext): Future[Unit]
+  def queryEnd(stage: QueryEnd)(implicit ec: ExecutionContext, pc: PluginContext): Future[Unit]
 }
 
 /**
  * The default QueryEventsListener implementation which logs query events to stdout and Slack.
  */
 class QueryEventLogger extends QueryEventsListener {
-  override def queryStart(stage: QueryStage)(
+  override def queryStart(stage: QueryStart)(
     implicit ec: ExecutionContext,
     pc: PluginContext
   ): Future[Unit] = Future {
     implicit val log = Logger.log(stage.info.authId)
+    // Always log the query start event
+    log.info(s"event-query-created => ${stage.info.id}")
     logQueryInfo(stage, slackOverride = Config.slackQueryCreated)
   }
 
-  override def splitEnd(stage: QueryStage)(
+  override def splitEnd(stage: QuerySplit)(
     implicit ec: ExecutionContext,
     pc: PluginContext
   ): Future[Unit] = Future {
@@ -207,16 +207,19 @@ class QueryEventLogger extends QueryEventsListener {
       case Some(false) =>
       case Some(true) => {
         implicit val log = Logger.log(stage.info.authId)
+        log.info(s"event-split-completed => ${stage.info.id}")
         logQueryInfo(stage, slackOverride = Config.slackSplitComplete)
       }
     }
   }
 
-  override def queryEnd(stage: QueryStage)(
+  override def queryEnd(stage: QueryEnd)(
     implicit ec: ExecutionContext,
     pc: PluginContext
   ): Future[Unit] = Future {
     implicit val log = Logger.log(stage.info.authId)
+    // Always log query completion
+    log.info(s"event-query-completed => ${stage.info.id}")
     logQueryInfo(stage)
   }
 
@@ -242,7 +245,7 @@ class QueryEventLogger extends QueryEventsListener {
       slackColor: Option[String],
       slackEmoji: Option[String]
     ) = queryStage match {
-      case QueryStart(QueryInfo(_, _, time, Some(resource), Some(user), _, _, _)) => {
+      case QueryStart(QueryInfo(_, _, time, Some(resource), Some(user), _, _, _), _) => {
         val prefix = queryPrefix(queryStage.info)
         val logMessage: Option[String] = Config.logQueryCreated match {
           case Some(false) => None
@@ -255,7 +258,7 @@ class QueryEventLogger extends QueryEventsListener {
 
         (InfoLevel, logMessage, Config.slackQueryCreated, None, None)
       }
-      case QuerySplit(QueryInfo(_, _, time, _, _, _, None, _), stage, task) => {
+      case QuerySplit(QueryInfo(_, _, time, _, _, _, None, _), stage, task, _) => {
         val prefix = queryPrefix(queryStage.info)
         val elapsed = Time.human(time.runDuration)
         val logMessage: Option[String] = Some(
@@ -265,7 +268,7 @@ class QueryEventLogger extends QueryEventsListener {
 
         (InfoLevel, logMessage, Config.slackSplitComplete, None, None)
       }
-      case QuerySplit(QueryInfo(_, _, time, _, _, _, Some(FailureInfo(code, message, category)), _), stage, task) => {
+      case QuerySplit(QueryInfo(_, _, time, _, _, _, Some(FailureInfo(code, message, category)), _), stage, task, _) => {
         val prefix = queryPrefix(queryStage.info)
         val elapsed = Time.human(time.runDuration)
         val msg = message.getOrElse("")
@@ -280,7 +283,7 @@ class QueryEventLogger extends QueryEventsListener {
 
         (InfoLevel, logMessage, Config.slackSplitComplete, None, None)
       }
-      case QueryEnd(QueryInfo(_, _, time, Some(resource), Some(user), _, None, _)) => {
+      case QueryEnd(QueryInfo(_, _, time, Some(resource), Some(user), _, None, _), _) => {
         val prefix = queryPrefix(queryStage.info)
         val elapsed = Time.human(time.totalDuration)
         val logMessage: Option[String] = Config.logQuerySuccess match {
@@ -295,7 +298,7 @@ class QueryEventLogger extends QueryEventsListener {
 
         (InfoLevel, logMessage, Config.slackQuerySuccess, None, None)
       }
-      case QueryEnd(QueryInfo(_, _, time, Some(resource), Some(user), _, Some(FailureInfo(code, message, category)), _)) => {
+      case QueryEnd(QueryInfo(_, _, time, Some(resource), Some(user), _, Some(FailureInfo(code, message, category)), _), _) => {
         val prefix = queryPrefix(queryStage.info)
         val elapsed = Time.human(time.totalDuration)
         val msg = message.getOrElse("")
@@ -371,29 +374,19 @@ class QueryEvents(listeners: List[QueryEventsListener]) extends EventListener {
 
   override def queryCreated(event: QueryCreatedEvent): Unit = listeners map { listener =>
     wrappedEventHandler {
-      // Always log event receipt
-      Logger.log.info(s"event-query-created => ${event.getMetadata.getQueryId}")
-
-      val stage = QueryStage.from(event)
-      listener.queryStart(stage)
+      listener.queryStart(QueryStage.from(event))
     }
   }
 
   override def splitCompleted(event: SplitCompletedEvent): Unit = listeners map { listener =>
     wrappedEventHandler {
-      Logger.log.info(s"event-split-completed => ${event.getQueryId}")
-      val stage = QueryStage.from(event)
-      listener.splitEnd(stage)
+      listener.splitEnd(QueryStage.from(event))
     }
   }
 
   override def queryCompleted(event: QueryCompletedEvent): Unit = listeners map { listener =>
     wrappedEventHandler {
-      // Always log event receipt
-      Logger.log.info(s"event-query-completed => ${event.getMetadata.getQueryId}")
-
-      val stage = QueryStage.from(event)
-      listener.queryEnd(stage)
+      listener.queryEnd(QueryStage.from(event))
     }
   }
 }
