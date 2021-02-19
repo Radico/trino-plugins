@@ -10,11 +10,12 @@ if [[ $DIRTY_TREE -ne 0 ]]; then
 fi
 
 SCALA_VERSION='2.13'
-ARTIFACT=`sbt assembly | grep TRINO_PLUGINS_ARTIFACT | grep '.jar' | head -n 1 | cut -d ':' -f 2 | tr -d [:space:]`
+ARTIFACT=$(sbt assembly | grep TRINO_PLUGINS_ARTIFACT | grep '.jar' | head -n 1 | cut -d ':' -f 2 | tr -d [:space:])
+echo "Artifact: ${ARTIFACT}"
 
 SRC_PATH="target/scala-${SCALA_VERSION}/${ARTIFACT}"
-TRINO_VERSION=`echo $ARTIFACT | cut -d '-' -f 4`
-GIT_HASH=`echo $ARTIFACT | cut -d '-' -f 5 | cut -d '.' -f 1`
+TRINO_VERSION=$(echo $ARTIFACT | cut -d '-' -f 3)
+GIT_HASH=$(echo $ARTIFACT | cut -d '-' -f 4 | cut -d '.' -f 1)
 
 EVENTS_DST_PATH="trino-config-docker/plugin/trino-events/trino-${TRINO_VERSION}-plugins.jar"
 
