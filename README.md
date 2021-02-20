@@ -123,7 +123,7 @@ $ TRINO_PORT=8888 ./start-trino.sh
 
 ## Configuration
 
-Configuration is applied via environment variables or the `/etc/trino/trin-plugins.properies` file.
+Configuration is applied via environment variables or the `/etc/trino/cluster-info.properties` file.
 
 Each of the configuration descriptors below has a header of the following form: `<description> (<type> = <default-value>)`
 
