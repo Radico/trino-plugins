@@ -17,3 +17,4 @@ stale_outputs_checked
 
 # Docker
 .dockerenv
+cluster-info.properties

@@ -1,12 +1,31 @@
+- [`ADOPTERS.md`](ADOPTERS.md) - list of project adopters, other companies who may use this package.
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) - code of conduct
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) - contributing guide
+- [`LICENSE`](LICENSE) - our standard [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0)
+
 # trino-plugins
 
-Plugins framework for Trino clusters aimed at easing the boostrap process plugins written
-for the [Trino SPI](https://github.com/trinodb/trino/tree/master/trino-spi).
+```
+   _____ _                          ____        __       
+  / ___/(_)___ ___  ____  ____     / __ \____ _/ /_____ _
+  \__ \/ / __ `__ \/ __ \/ __ \   / / / / __ `/ __/ __ `/
+ ___/ / / / / / / / /_/ / / / /  / /_/ / /_/ / /_/ /_/ / 
+/____/_/_/ /_/ /_/\____/_/ /_/  /_____/\__,_/\__/\__,_/  
+```
+## Motivation & Rationale
 
-For those unfamiliar with the acronym, SPI stands for "Service Provider Interface".
+This project serves as a blueprint for writing Scala plugins for the
+[Trino Service Provider Interface (SPI)](https://github.com/trinodb/trino/tree/master/trino-spi). When Simon Data first got started
+with Presto, there wasn't a solid option for auth. These days, Apache Ranger
+will work for most, but there is still a benefit to be had in real-time notifications
+triggered by the EventListener plugin.
 
+## Core Contributors
+* Joel Edwards: @joeledwards
 
-## [SystemAccessControl](https://github.com/trinodb/trino/blob/master/trino-spi/src/main/java/io/trino/spi/security/SystemAccessControl.java)
+## Current Plugins
+
+### [SystemAccessControl](https://github.com/trinodb/trino/blob/master/trino-spi/src/main/java/io/trino/spi/security/SystemAccessControl.java)
 
 The initial version of this project was aimed only at implementing custom auth via SystemAccessControl. For this reason,
 the auth store is much more full featured than any other part of this project. The SystemAccessControl interface
@@ -17,12 +36,12 @@ Implement `com.simondata.trino.auth.AuthRules` to define your own custom auth ru
 built-in example implementations.
 
 
-## [EventListener](https://github.com/trinodb/trino/blob/master/trino-spi/src/main/java/io/trino/spi/eventlistener/EventListener.java)
+### [EventListener](https://github.com/trinodb/trino/blob/master/trino-spi/src/main/java/io/trino/spi/eventlistener/EventListener.java)
 
 The EventListener interface specifies methods that will be called for query lifecycle events (create/split/complete).
 
 
-## Starburst
+## Notes on Starburst Enterprise
 
 The `SystemAccessControl` interface is subject to major change between versions of Trino. The `SystemAccessControl`
 interface bundled with Starburst's release is proprietary, expanding on the method definitions in the
@@ -47,15 +66,15 @@ interface structure. The classes which `XRay` inspects are specified in `AuthMet
 
 Make sure you have the jdk installed for java 8 or greater.
 
-Mac (x64):
+*Mac (x64):*
 ```
 brew cask install java
 ```
 
-Mac (M1)
+*Mac (M1):*
 Download the [Zulu JDK](https://www.azul.com/downloads/zulu-community/?os=macos&architecture=arm-64-bit&package=jdk) dmg
 
-Ubuntu:
+*Ubuntu:*
 ```
 sudo apt install default-jdk
 ```
@@ -123,7 +142,7 @@ $ TRINO_PORT=8888 ./start-trino.sh
 
 ## Configuration
 
-Configuration is applied via environment variables or the `/etc/trino/trin-plugins.properies` file.
+Configuration is applied via environment variables or the `/etc/trino/cluster-info.properties` file.
 
 Each of the configuration descriptors below has a header of the following form: `<description> (<type> = <default-value>)`
 
