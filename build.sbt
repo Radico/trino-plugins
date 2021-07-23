@@ -1,7 +1,7 @@
 //version := "1.0"
 
 val projectName = "trino-plugins"
-val trinoVersion = "353"
+val trinoVersion = "354"
 
 // Should the com.simondata.trino.Run object be exported in the jar?
 val addEntryPoint = true
