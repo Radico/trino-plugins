@@ -7,10 +7,9 @@
 
 package com.simondata.util
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import com.simondata.UnitSpec
 
-class XRaySpec extends AnyWordSpec with Matchers {
+class XRaySpec extends UnitSpec {
   def inner(caller: Boolean): Option[String] = if (caller) XRay.getCallerName() else XRay.getMethodName()
   def outer(caller: Boolean): Option[String] = inner(caller)
 

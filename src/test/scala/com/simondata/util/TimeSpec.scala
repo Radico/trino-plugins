@@ -7,14 +7,13 @@
 
 package com.simondata.util
 
-import java.util.concurrent.TimeUnit
+import com.simondata.UnitSpec
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import java.util.concurrent.TimeUnit
 
 import scala.concurrent.duration.Duration
 
-class TimeSpec extends AnyWordSpec with Matchers {
+class TimeSpec extends UnitSpec {
   "Time" when {
     "formatting durations" should {
       "display hours" in {

@@ -7,11 +7,10 @@
 
 package com.simondata.util
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import com.simondata.UnitSpec
 import play.api.libs.json.{JsObject, JsString, Json}
 
-class ConfigSupplierSpec extends AnyWordSpec with Matchers {
+class ConfigSupplierSpec extends UnitSpec {
   "ConfigSupplier" when {
     "fetching as strings" should {
       "get the a value if present" in {

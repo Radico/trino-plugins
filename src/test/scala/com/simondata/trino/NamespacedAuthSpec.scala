@@ -7,11 +7,9 @@
 
 package com.simondata.trino
 
-import io.trino.spi.security.AccessDeniedException.denyViewQuery
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import com.simondata.UnitSpec
 
-class NamespacedAuthSpec extends AnyWordSpec with Matchers {
+class NamespacedAuthSpec extends UnitSpec {
   val namespace = "simon"
   val auth: TrinoAuth = new NamespacedAuth(namespace)
 

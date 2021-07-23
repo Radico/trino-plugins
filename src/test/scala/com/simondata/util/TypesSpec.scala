@@ -7,12 +7,11 @@
 
 package com.simondata.util
 
+import com.simondata.UnitSpec
+
 import java.util.Optional
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-
-class TypesSpec extends AnyWordSpec with Matchers {
+class TypesSpec extends UnitSpec {
   "Types" when {
     "translating options" should {
       "convert a Java Optional to a Scala Option" in {
