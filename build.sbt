@@ -1,7 +1,7 @@
 //version := "1.0"
 
 val projectName = "trino-plugins"
-val trinoVersion = "357"
+val trinoVersion = "393"
 
 // Should the com.simondata.trino.Run object be exported in the jar?
 val addEntryPoint = true
@@ -11,7 +11,7 @@ name := projectName
 // Synchronized with the version of Trino we are supporting
 version := trinoVersion
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.6"
 
 // https://mvnrepository.com/artifact/io.trino/trino-spi
 if (addEntryPoint) {
@@ -36,8 +36,8 @@ logBuffered in Test := false
 compileOrder := CompileOrder.ScalaThenJava
 
 // Target Java SE 11
-scalacOptions += "-target:jvm-11"
-javacOptions ++= Seq("-source", "11", "-target", "11", "-Xlint")
+scalacOptions += "-target:jvm-17"
+javacOptions ++= Seq("-source", "17", "-target", "17", "-Xlint")
 
 val dateTime = {
   import java.util.{Date, TimeZone}
