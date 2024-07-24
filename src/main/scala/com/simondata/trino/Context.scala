@@ -8,8 +8,8 @@
 package com.simondata.trino
 
 import com.simondata.util.Types
-import io.trino.spi.connector.{CatalogSchemaName, CatalogSchemaTableName}
-import io.trino.spi.security.SystemSecurityContext
+import io.trino.spi.connector.{CatalogSchemaName, CatalogSchemaRoutineName, CatalogSchemaTableName}
+import io.trino.spi.security.{Identity, SystemSecurityContext}
 
 /**
  * The general concept of a namespace. This is used in multiple places and is context-specific.
@@ -119,9 +119,16 @@ object XQuery {
   def of(id: Option[String], owner: Option[AuthId] = None): XQuery = XQuery(id, owner)
   def from(context: SystemSecurityContext): XQuery = of(Types.toOption(context.getQueryId).map(_.getId))
   def from(owner: String): XQuery = of(None, Some(AuthIdUser(owner)))
+
+  @deprecated
   def from(context: SystemSecurityContext, owner: String): XQuery = of(
     Types.toOption(context.getQueryId.map(_.getId)),
     Some(AuthIdUser(owner))
+  )
+
+  def from(context: SystemSecurityContext, owner: Identity): XQuery = of(
+    Types.toOption(context.getQueryId.map(_.getId)),
+    Some(AuthIdUser(owner.getUser))
   )
 }
 

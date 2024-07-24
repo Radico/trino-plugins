@@ -19,7 +19,7 @@ class CustomSystemAccessControlSpec extends UnitSpec {
             case None => assert(false, s"No method matching name '${sacMethod.name}''")
             case Some(customMethod) => {
               sacMethod.parameters.zipAll(customMethod.parameters, null, null) foreach { case (sacParam, customParam) =>
-                assert(sacParam.valueType.name == customParam.valueType.name)
+                assert(sacParam.valueType.name == customParam.valueType.name, s"Custom Method: ${sacMethod.name}")
               }
             }
           }

@@ -1,7 +1,7 @@
 //version := "1.0"
 
 val projectName = "trino-plugins"
-val trinoVersion = "393"
+val trinoVersion = "380"
 
 // Should the com.simondata.trino.Run object be exported in the jar?
 val addEntryPoint = true
@@ -11,7 +11,7 @@ name := projectName
 // Synchronized with the version of Trino we are supporting
 version := trinoVersion
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.14"
 
 // https://mvnrepository.com/artifact/io.trino/trino-spi
 if (addEntryPoint) {
@@ -21,13 +21,13 @@ if (addEntryPoint) {
 }
 
 // https://mvnrepository.com/artifact/com.typesafe.play/play-json
-libraryDependencies += "com.typesafe.play" %% "play-json" % "2.8.1"
+libraryDependencies += "com.typesafe.play" %% "play-json" % "2.10.6"
 
 // https://mvnrepository.com/artifact/commons-codec/commons-codec
-libraryDependencies += "commons-codec" % "commons-codec" % "1.15"
+libraryDependencies += "commons-codec" % "commons-codec" % "1.17.1"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
 // Helpful when testing (recommended by scalatest)
 logBuffered in Test := false
