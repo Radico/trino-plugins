@@ -8,8 +8,11 @@
 package com.simondata.trino
 
 import com.simondata.util.Types
-import io.trino.spi.connector.{CatalogSchemaName, CatalogSchemaRoutineName, CatalogSchemaTableName}
+import io.trino.spi.QueryId
+import io.trino.spi.connector.{CatalogSchemaName, CatalogSchemaTableName, EntityPrivilege}
 import io.trino.spi.security.{Identity, SystemSecurityContext}
+
+import java.util.Optional
 
 /**
  * The general concept of a namespace. This is used in multiple places and is context-specific.
@@ -98,6 +101,30 @@ object XProcedure {
   def of(name: String): XProcedure = XProcedure(name)
 }
 
+case class XIdentity(name: String) extends Resource {
+  override def category: String = "identity"
+  override def toString: String = s"${name}"
+}
+object XIdentity {
+  def of(name: String): XIdentity = XIdentity(name)
+
+  def from(identity: Identity): XIdentity = XIdentity.of(
+    identity.getUser
+  )
+}
+
+case class XEntityPrivilege(name: String) extends Resource {
+  override def category: String = "entity-privilege"
+  override def toString: String = s"${name}"
+}
+object XEntityPrivilege {
+  def of(name: String): XEntityPrivilege = XEntityPrivilege(name)
+
+  def from(privilege: EntityPrivilege): XEntityPrivilege = XEntityPrivilege.of(
+    privilege.name()
+  )
+}
+
 /**
  * Identifies a query resource against which auth permissions for a given
  * user may be evaluated. The presence of the id and/or the owner determines
@@ -117,18 +144,25 @@ case class XQuery(id: Option[String], owner: Option[AuthId]) extends Resource {
 object XQuery {
   def any: XQuery = of(None, None)
   def of(id: Option[String], owner: Option[AuthId] = None): XQuery = XQuery(id, owner)
-  def from(context: SystemSecurityContext): XQuery = of(Types.toOption(context.getQueryId).map(_.getId))
-  def from(owner: String): XQuery = of(None, Some(AuthIdUser(owner)))
+  def from(context: SystemSecurityContext): XQuery = {
+    of(Types.toOption(Optional.of(context.getQueryId)).map(_.getId))
+  }
+  def from(owner: String): XQuery = of(None, Some(AuthIdIdentity(owner)))
 
   @deprecated
   def from(context: SystemSecurityContext, owner: String): XQuery = of(
-    Types.toOption(context.getQueryId.map(_.getId)),
-    Some(AuthIdUser(owner))
+    Types.toOption(Optional.of(context.getQueryId).map(_.getId)),
+    Some(AuthIdIdentity(owner))
   )
 
   def from(context: SystemSecurityContext, owner: Identity): XQuery = of(
-    Types.toOption(context.getQueryId.map(_.getId)),
-    Some(AuthIdUser(owner.getUser))
+    Types.toOption(Optional.of(context.getQueryId).map(_.getId)),
+    Some(AuthIdIdentity(owner.getUser))
+  )
+
+  def from(queryId: QueryId, owner: Identity): XQuery = of(
+    Types.toOption(Optional.of(queryId).map(_.getId)),
+    Some(AuthIdIdentity(owner.getUser))
   )
 }
 

@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   trino:
-    image: trinodb/trino:351
+    image: trinodb/trino:445
     env_file:
       - .dockerenv
     volumes:

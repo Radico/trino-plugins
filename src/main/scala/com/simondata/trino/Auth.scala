@@ -23,8 +23,8 @@ case object AuthIdUnknown extends AuthId("anonymous") {
   val name = "unknown"
 }
 object AuthId {
-  def of(securityContext: SystemSecurityContext): AuthId = AuthIdUser(securityContext.getIdentity.getUser)
-  def of(principal: Principal): AuthId = AuthIdUser(principal.getName)
+  def of(securityContext: SystemSecurityContext): AuthId = AuthIdIdentity(securityContext.getIdentity.getUser)
+  def of(principal: Principal): AuthId = AuthIdIdentity(principal.getName)
   def of(identity: Identity): AuthId = AuthIdIdentity(identity.getUser)
   def unknown: AuthId = AuthIdUnknown
 }
@@ -39,7 +39,9 @@ case object AuthActionCreate extends AuthAction("create")
 case object AuthActionRead extends AuthAction("read")
 case object AuthActionUpdate extends AuthAction("update")
 case object AuthActionDelete extends AuthAction("delete")
+case object AuthActionDeny extends AuthAction("deny")
 case object AuthActionExecute extends AuthAction("execute")
+case object AuthActionKill extends AuthAction("kill")
 
 // Auth Resources (which resource are they trying to read/modify)
 sealed trait AuthResource {
@@ -56,6 +58,8 @@ case class AuthResourceRecord(resource: Record) extends AuthResource
 case class AuthResourceFunction(resource: XFunction) extends AuthResource
 case class AuthResourceProcedure(resource: XProcedure) extends AuthResource
 case class AuthResourceQuery(resource: XQuery) extends AuthResource
+case class AuthResourceIdentity(resource: XIdentity) extends AuthResource
+case class AuthResourcePrivilege(resource: XEntityPrivilege) extends AuthResource
 case object AuthResourceSystemInfo extends AuthResource {
   def resource: Resource = SystemInfo
 }

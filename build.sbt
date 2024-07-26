@@ -1,7 +1,7 @@
 //version := "1.0"
 
 val projectName = "trino-plugins"
-val trinoVersion = "380"
+val trinoVersion = "445"
 
 // Should the com.simondata.trino.Run object be exported in the jar?
 val addEntryPoint = true
@@ -11,6 +11,7 @@ name := projectName
 // Synchronized with the version of Trino we are supporting
 version := trinoVersion
 
+//scalaVersion := "3.4.2"
 scalaVersion := "2.13.14"
 
 // https://mvnrepository.com/artifact/io.trino/trino-spi
@@ -30,14 +31,14 @@ libraryDependencies += "commons-codec" % "commons-codec" % "1.17.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
 // Helpful when testing (recommended by scalatest)
-logBuffered in Test := false
+Test / logBuffered := false
 
 // The single Java source acts as the entry point for our plugin
 compileOrder := CompileOrder.ScalaThenJava
 
 // Target Java SE 11
-scalacOptions += "-target:jvm-17"
-javacOptions ++= Seq("-source", "17", "-target", "17", "-Xlint")
+scalacOptions += "-target:jvm-21"
+javacOptions ++= Seq("-source", "21", "-target", "21", "-Xlint")
 
 val dateTime = {
   import java.util.{Date, TimeZone}
@@ -69,7 +70,7 @@ def buildArtifactName(extension: String = ".jar") = {
   name
 }
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case PathList("io", "trino", "spi", "license", "LicenseManager.class") => MergeStrategy.discard
   case PathList("META-INF", "services", "io.trino.spi.Plugin") => MergeStrategy.first
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
@@ -90,6 +91,6 @@ artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
   buildArtifactName(s".${artifact.extension}")
 }
 
-assemblyJarName in assembly := {
+assembly / assemblyJarName := {
   buildArtifactName()
 }

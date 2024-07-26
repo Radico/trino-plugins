@@ -82,7 +82,7 @@ case class QueryInfo(
   failure: Option[FailureInfo] = None,
   queryType: Option[String] = None
 ) {
-  def authId: AuthId = user.map(AuthIdUser(_)).getOrElse(AuthIdUnknown)
+  def authId: AuthId = user.map(AuthIdIdentity(_)).getOrElse(AuthIdUnknown)
   def failed: Boolean = failure.isDefined
 }
 
