@@ -254,16 +254,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-
-  /*override def checkCanImpersonateUser(context: SystemSecurityContext, userName: String): Unit = {
-    val id: AuthId = AuthId.of(context)
-    evaluateAuthQuery(
-      AuthQuery(id, AuthActionUpdate, AuthResourceSession(Session(Some("user"), Some(userName))))
-    ) {
-      denyImpersonateUser(id.name, userName)
-    }
-  }*/
-
   override def checkCanSetUser(principal: Optional[Principal], userName: String): Unit = {
     val id: AuthId = Types.toOption(principal).map(AuthId.of(_)).getOrElse(AuthIdUnknown)
     evaluateAuthQuery(
@@ -280,120 +270,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
       denyExecuteQuery()
     }
   }
-
-
-  /*override def checkCanExecuteQuery(identity: Identity): Unit = {
-    super.checkCanExecuteQuery(identity)
-    // TODO: Not sure what to do here with no context about what query can run.
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(identity), AuthActionExecute, AuthResourceQuery(XQuery.from(identity)))
-    ) {
-      denyExecuteQuery()
-    }
-  }*/
-
-
-  /*override def checkCanExecuteQuery(context: SystemSecurityContext): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionExecute, AuthResourceQuery(XQuery.from(context)))
-    ) {
-      denyExecuteQuery()
-    }
-  }*/
-
-  /*override def checkCanViewQueryOwnedBy(context: SystemSecurityContext, queryOwner: Identity): Unit = {
-    val id: AuthId = AuthId.of(context)
-
-    evaluateAuthQuery(
-      AuthQuery(id, AuthActionRead, AuthResourceQuery(XQuery.from(context, queryOwner)))
-    ) {
-      denyViewQuery(s"${id} cannot view queries owned by ${AuthIdUser(queryOwner.getUser)}")
-    }
-  }*/
-
-  /*override def checkCanViewQueryOwnedBy(context: SystemSecurityContext, queryOwner: String): Unit = {
-    val id: AuthId = AuthId.of(context)
-
-    evaluateAuthQuery(
-      AuthQuery(id, AuthActionRead, AuthResourceQuery(XQuery.from(context, queryOwner)))
-    ) {
-      denyViewQuery(s"${id} cannot view queries owned by ${AuthIdUser(queryOwner)}")
-    }
-  }*/
-
-  /*override def filterViewQueryOwnedBy(context: SystemSecurityContext, queryOwners: util.Set[String]): util.Set[String] = {
-    val allowed = filterResources[String](
-      context,
-      queryOwners.asScala.toList
-    ) { owner =>
-      AuthResourceQuery(XQuery.from(context, owner))
-    } toSet
-
-    allowed asJava
-  }*/
-
-  /*override def filterViewQueryOwnedBy(context: SystemSecurityContext, queryOwners: util.Collection[Identity]): util.Collection[Identity] = {
-    val allowed = filterResources[Identity](
-      context,
-      queryOwners.asScala.toList
-    ) { owner =>
-      AuthResourceQuery(XQuery.from(context, owner))
-    }
-
-    allowed asJava
-  }*/
-
-  /*override def checkCanKillQueryOwnedBy(context: SystemSecurityContext, queryOwner: Identity): Unit = {
-    val id: AuthId = AuthId.of(context)
-
-    evaluateAuthQuery(
-      AuthQuery(id, AuthActionDelete, AuthResourceQuery(XQuery.from(context, queryOwner)))
-    ) {
-      denyViewQuery(s"${id} cannot kill queries owned by ${AuthIdUser(queryOwner.getUser)}")
-    }
-  }*/
-
-  /*override def checkCanKillQueryOwnedBy(context: SystemSecurityContext, queryOwner: String): Unit = {
-    val id: AuthId = AuthId.of(context)
-
-    evaluateAuthQuery(
-      AuthQuery(id, AuthActionDelete, AuthResourceQuery(XQuery.from(context, queryOwner)))
-    ) {
-      denyViewQuery(s"${id} cannot kill queries owned by ${AuthIdUser(queryOwner)}")
-    }
-  }*/
-
-  /*override def checkCanReadSystemInformation(context: SystemSecurityContext): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionRead, AuthResourceSystemInfo)
-    ) {
-      denyReadSystemInformationAccess()
-    }
-  }*/
-
-  /*override def checkCanWriteSystemInformation(context: SystemSecurityContext): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionUpdate, AuthResourceSystemInfo)
-    ) {
-      denyWriteSystemInformationAccess()
-    }
-  }*/
-
-  /*override def checkCanSetSystemSessionProperty(context: SystemSecurityContext, propertyName: String): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionUpdate, AuthResourceSession(Session(Some(propertyName))))
-    ) {
-      denySetSystemSessionProperty(propertyName)
-    }
-  }*/
-
-  /*override def checkCanAccessCatalog(context: SystemSecurityContext, catalogName: String): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionRead, AuthResourceCatalog(Catalog(catalogName)))
-    ) {
-      denyCatalogAccess(catalogName)
-    }
-  }*/
 
   override def filterCatalogs(context: SystemSecurityContext, catalogs: util.Set[String]): util.Set[String] = {
     val allowed = filterResources[String](
@@ -532,19 +408,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-  /*
-  override def filterColumns(context: SystemSecurityContext, table: CatalogSchemaTableName, columns: util.List[ColumnMetadata]): util.List[ColumnMetadata] = {
-    val allowed = filterResources[ColumnMetadata](
-      context,
-      columns.asScala.toList
-    ) { column =>
-      AuthResourceColumn(Column(column.getName, Table.of(table)))
-    }
-
-    allowed asJava
-  }
-  */
-
   override def checkCanAddColumn(context: SystemSecurityContext, table: CatalogSchemaTableName): Unit = {
     evaluateAuthQuery(
       AuthQuery(AuthId.of(context), AuthActionUpdate, AuthResourceTable(Table.of(table)))
@@ -634,14 +497,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-  /*override def checkCanGrantExecuteFunctionPrivilege(context: SystemSecurityContext, functionName: String, grantee: TrinoPrincipal, grantOption: Boolean): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionGrant, AuthResourceFunction(XFunction.of(functionName)))
-    ) {
-      denyGrantExecuteFunctionPrivilege(functionName, context.getIdentity, grantee.getName)
-    }
-  }*/
-
   override def checkCanSetCatalogSessionProperty(context: SystemSecurityContext, catalogName: String, propertyName: String): Unit = {
     evaluateAuthQuery(
       AuthQuery(AuthId.of(context), AuthActionUpdate, AuthResourceCatalog(Catalog(catalogName)))
@@ -677,30 +532,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
       denyExecuteProcedure(procedure.getRoutineName)
     }
   }
-
-  /*override def checkCanExecuteFunction(context: SystemSecurityContext, functionName: String): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionExecute, AuthResourceFunction(XFunction.of(functionName)))
-    ) {
-      denyExecuteFunction(functionName)
-    }
-  }*/
-
-  /*override def checkCanExecuteFunction(systemSecurityContext: SystemSecurityContext, functionName: String): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(systemSecurityContext), AuthActionExecute, AuthResourceFunction(XFunction.of(functionName)))
-    ) {
-      denyExecuteFunction(functionName)
-    }
-  }*/
-
-  /*override def checkCanExecuteFunction(systemSecurityContext: SystemSecurityContext, functionKind: FunctionKind, functionName: CatalogSchemaRoutineName): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(systemSecurityContext), AuthActionExecute, AuthResourceFunction(XFunction.of(functionName.getRoutineName)))
-    ) {
-      denyExecuteFunction(functionName.getRoutineName)
-    }
-  }*/
 
   override def checkCanSetTableAuthorization(context: SystemSecurityContext, table: CatalogSchemaTableName, principal: TrinoPrincipal): Unit = {
     evaluateAuthQuery(
@@ -860,21 +691,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-
-  override def checkCanCreateRole(context: SystemSecurityContext, role: String, grantor: Optional[TrinoPrincipal]): Unit = super.checkCanCreateRole(context, role, grantor)
-
-  override def checkCanDropRole(context: SystemSecurityContext, role: String): Unit = super.checkCanDropRole(context, role)
-
-  override def checkCanGrantRoles(context: SystemSecurityContext, roles: util.Set[String], grantees: util.Set[TrinoPrincipal], adminOption: Boolean, grantor: Optional[TrinoPrincipal]): Unit = super.checkCanGrantRoles(context, roles, grantees, adminOption, grantor)
-
-  override def checkCanRevokeRoles(context: SystemSecurityContext, roles: util.Set[String], grantees: util.Set[TrinoPrincipal], adminOption: Boolean, grantor: Optional[TrinoPrincipal]): Unit = super.checkCanRevokeRoles(context, roles, grantees, adminOption, grantor)
-
-  /*override def checkCanShowRoleAuthorizationDescriptors(context: SystemSecurityContext): Unit = super.checkCanShowRoleAuthorizationDescriptors(context)*/
-
-  override def checkCanShowCurrentRoles(context: SystemSecurityContext): Unit = super.checkCanShowCurrentRoles(context)
-
-  override def checkCanShowRoleGrants(context: SystemSecurityContext): Unit = super.checkCanShowRoleGrants(context)
-
   override def checkCanExecuteTableProcedure(systemSecurityContext: SystemSecurityContext, table: CatalogSchemaTableName, procedure: String): Unit = {
     evaluateAuthQuery(
       AuthQuery(AuthId.of(systemSecurityContext), AuthActionExecute, AuthResourceProcedure(XProcedure.of(procedure)))
@@ -955,16 +771,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-  override def filterColumns(context: SystemSecurityContext, catalogName: String, tableColumns: util.Map[SchemaTableName, util.Set[String]]): util.Map[SchemaTableName, util.Set[String]] = {
-    // TODO: we don't address more granular access than catalog.
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(context), AuthActionRead, AuthResourceCatalog(Catalog(catalogName)))
-    ) {
-      denyCatalogAccess(catalogName)
-    }
-    tableColumns
-  }
-
   override def canAccessCatalog(context: SystemSecurityContext, catalogName: String): Boolean = {
     evaluateAuthQuery(
       AuthQuery(AuthId.of(context), AuthActionRead, AuthResourceCatalog(Catalog(catalogName)))
@@ -1025,6 +831,16 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
+  override def filterColumns(context: SystemSecurityContext, catalogName: String, tableColumns: util.Map[SchemaTableName, util.Set[String]]): util.Map[SchemaTableName, util.Set[String]] = {
+    // TODO: we don't address more granular access than catalog.
+    evaluateAuthQuery(
+      AuthQuery(AuthId.of(context), AuthActionRead, AuthResourceCatalog(Catalog(catalogName)))
+    ) {
+      denyCatalogAccess(catalogName)
+    }
+    tableColumns
+  }
+
   override def filterFunctions(context: SystemSecurityContext, catalogName: String, functionNames: util.Set[SchemaFunctionName]): util.Set[SchemaFunctionName] = {
     // TODO: we don't address more granular access than catalog.
     evaluateAuthQuery(
@@ -1034,7 +850,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
     functionNames
   }
-
 
   override def checkCanCreateFunction(systemSecurityContext: SystemSecurityContext, functionName: CatalogSchemaRoutineName): Unit = {
     evaluateAuthQuery(
@@ -1067,9 +882,19 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     Optional.empty()
   }
 
-  /*override def getColumnMasks(context: SystemSecurityContext, tableName: CatalogSchemaTableName, columnName: String, `type`: Type): util.List[ViewExpression] = {
-    new java.util.ArrayList[ViewExpression]()
-  }*/
+  // TODO: Deny Role modifications for now
+
+  override def checkCanCreateRole(context: SystemSecurityContext, role: String, grantor: Optional[TrinoPrincipal]): Unit = super.checkCanCreateRole(context, role, grantor)
+
+  override def checkCanDropRole(context: SystemSecurityContext, role: String): Unit = super.checkCanDropRole(context, role)
+
+  override def checkCanGrantRoles(context: SystemSecurityContext, roles: util.Set[String], grantees: util.Set[TrinoPrincipal], adminOption: Boolean, grantor: Optional[TrinoPrincipal]): Unit = super.checkCanGrantRoles(context, roles, grantees, adminOption, grantor)
+
+  override def checkCanRevokeRoles(context: SystemSecurityContext, roles: util.Set[String], grantees: util.Set[TrinoPrincipal], adminOption: Boolean, grantor: Optional[TrinoPrincipal]): Unit = super.checkCanRevokeRoles(context, roles, grantees, adminOption, grantor)
+
+  override def checkCanShowCurrentRoles(context: SystemSecurityContext): Unit = super.checkCanShowCurrentRoles(context)
+
+  override def checkCanShowRoleGrants(context: SystemSecurityContext): Unit = super.checkCanShowRoleGrants(context)
 
   override def getEventListeners(): java.lang.Iterable[EventListener] = {
     val listeners: List[EventListener] = QueryEvents.instance :: Nil

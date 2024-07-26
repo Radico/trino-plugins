@@ -17,6 +17,7 @@ sealed abstract class AuthId(category: String) {
   override def toString(): String = s"id:${category}:${name}"
 }
 case class AuthIdPrincipal(name: String) extends AuthId("principal")
+@deprecated("Use AuthIdIdentity instead")
 case class AuthIdUser(name: String) extends AuthId("user")
 case class AuthIdIdentity(name: String) extends AuthId("identity")
 case object AuthIdUnknown extends AuthId("anonymous") {
