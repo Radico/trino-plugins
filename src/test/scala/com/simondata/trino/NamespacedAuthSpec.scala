@@ -811,6 +811,36 @@ class NamespacedAuthSpec extends UnitSpec {
         }
       }
 
+      "allow all users to create temporary tables in schema hive.presto_export" in {
+        //sac.checkCanAddColumn()
+        //sac.checkCanDropColumn()
+        //sac.checkCanSetColumnComment()
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+      }
+
       "allow all users to alter temporary tables in hive.trino_shared_dev" in {
         //sac.checkCanAddColumn()
         //sac.checkCanDropColumn()

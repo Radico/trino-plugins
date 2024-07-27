@@ -26,7 +26,9 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
   val sharedSchemas = Set(
     "trino_shared",
-    "trino_shared_dev"
+    "trino_shared_dev",
+    "presto_export",
+    "presto_export_dev"
   )
   def isSharedSchema(c: Column): Boolean = isSharedSchema(c.table)
   def isSharedSchema(t: Table): Boolean = isSharedSchema(t.schema)
