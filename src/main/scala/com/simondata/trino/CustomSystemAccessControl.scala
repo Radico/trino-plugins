@@ -876,7 +876,11 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-  override def shutdown(): Unit = super.shutdown()
+  override def shutdown(): Unit = {
+    val logger = Logger.log(AuthIdUnknown)
+    logger.info(s"SHUTDOWN is being called")
+    super.shutdown()
+  }
 
   override def getColumnMask(context: SystemSecurityContext, tableName: CatalogSchemaTableName, columnName: String, `type`: Type): Optional[ViewExpression] = {
     Optional.empty()
