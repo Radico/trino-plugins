@@ -1,7 +1,7 @@
 //version := "1.0"
 
 val projectName = "trino-plugins"
-val trinoVersion = "357"
+val trinoVersion = "445"
 
 // Should the com.simondata.trino.Run object be exported in the jar?
 val addEntryPoint = true
@@ -11,7 +11,8 @@ name := projectName
 // Synchronized with the version of Trino we are supporting
 version := trinoVersion
 
-scalaVersion := "2.13.1"
+//scalaVersion := "3.4.2"
+scalaVersion := "2.13.14"
 
 // https://mvnrepository.com/artifact/io.trino/trino-spi
 if (addEntryPoint) {
@@ -21,23 +22,23 @@ if (addEntryPoint) {
 }
 
 // https://mvnrepository.com/artifact/com.typesafe.play/play-json
-libraryDependencies += "com.typesafe.play" %% "play-json" % "2.8.1"
+libraryDependencies += "com.typesafe.play" %% "play-json" % "2.10.6"
 
 // https://mvnrepository.com/artifact/commons-codec/commons-codec
-libraryDependencies += "commons-codec" % "commons-codec" % "1.15"
+libraryDependencies += "commons-codec" % "commons-codec" % "1.17.1"
 
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
 // Helpful when testing (recommended by scalatest)
-logBuffered in Test := false
+Test / logBuffered := false
 
 // The single Java source acts as the entry point for our plugin
 compileOrder := CompileOrder.ScalaThenJava
 
 // Target Java SE 11
-scalacOptions += "-target:jvm-11"
-javacOptions ++= Seq("-source", "11", "-target", "11", "-Xlint")
+scalacOptions += "-target:jvm-21"
+javacOptions ++= Seq("-source", "21", "-target", "21", "-Xlint")
 
 val dateTime = {
   import java.util.{Date, TimeZone}
@@ -69,7 +70,7 @@ def buildArtifactName(extension: String = ".jar") = {
   name
 }
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case PathList("io", "trino", "spi", "license", "LicenseManager.class") => MergeStrategy.discard
   case PathList("META-INF", "services", "io.trino.spi.Plugin") => MergeStrategy.first
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
@@ -90,6 +91,6 @@ artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
   buildArtifactName(s".${artifact.extension}")
 }
 
-assemblyJarName in assembly := {
+assembly / assemblyJarName := {
   buildArtifactName()
 }

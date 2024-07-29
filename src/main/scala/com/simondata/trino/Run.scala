@@ -23,7 +23,7 @@ object Run extends App {
   private implicit val pc: PluginContext = LocalPlugin
   private implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  val id = AuthIdUser("admin")
+  val id = AuthIdIdentity("admin")
   val namespace = Namespace("default")
 
   val logger = Logger.log(namespace)(PluginContext.forName("trino-events"))

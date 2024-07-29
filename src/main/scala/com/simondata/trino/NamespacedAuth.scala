@@ -26,7 +26,9 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
   val sharedSchemas = Set(
     "trino_shared",
-    "trino_shared_dev"
+    "trino_shared_dev",
+    "presto_export",
+    "presto_export_dev"
   )
   def isSharedSchema(c: Column): Boolean = isSharedSchema(c.table)
   def isSharedSchema(t: Table): Boolean = isSharedSchema(t.schema)
@@ -58,7 +60,7 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
        * User "root" can do anything.
        */
       case AuthQuery(
-        AuthIdPrincipal("root") | AuthIdUser("root"),
+        AuthIdPrincipal("root") | AuthIdIdentity("root"),
         _,
         _
       ) => authQuery.allow()
@@ -72,14 +74,14 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
       // Allow a user to re-set their own identity (oddly, this happens)
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionUpdate,
         AuthResourceSession(Session(Some("user"), Some(newUser)))
       ) if user == newUser => authQuery.allow()
 
       // Allow manual adjustment of permitted session properties
       case AuthQuery(
-        AuthIdUser(_) | AuthIdPrincipal(_),
+        AuthIdPrincipal(_) | AuthIdIdentity(_),
         AuthActionUpdate,
         AuthResourceSession(Session(Some(property), _))
       ) if canSetSessionProperty(property) => authQuery.allow()
@@ -90,23 +92,23 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
       // Allow admin to set any session property (permits assuming identity)
       case AuthQuery(
-        AuthIdPrincipal("admin") | AuthIdUser("admin"),
+        AuthIdPrincipal("admin") | AuthIdIdentity("admin"),
         AuthActionUpdate,
         AuthResourceSession(_)
       ) => authQuery.allow()
 
       // Allow admin to read system info
       case AuthQuery(
-        AuthIdUser("admin"),
+        AuthIdIdentity("admin"),
         AuthActionRead,
         AuthResourceSystemInfo
       ) => authQuery.allow()
 
       // Only allow root to cancel its own queries
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionDelete,
-        AuthResourceQuery(XQuery(_, Some(AuthIdUser("root"))))
+        AuthResourceQuery(XQuery(_, Some(AuthIdIdentity("root"))))
       ) if user != "root" => authQuery.deny(messages.denyDefault)
 
       // Deny all other access to system info
@@ -125,7 +127,7 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
       // Allow all other actions for admin
       case AuthQuery(
-        AuthIdUser("admin"),
+        AuthIdIdentity("admin") ,
         _,
         _
       ) => authQuery.allow()
@@ -136,7 +138,7 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
       // Allow read operations on the catalog
       case AuthQuery(
-        AuthIdUser(_),
+        AuthIdIdentity(_),
         AuthActionRead,
         AuthResourceCatalog(_)
       ) => authQuery.allow()
@@ -144,43 +146,43 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
       // Allow read operations against certain hive.information_schema.
       // Trino will further validate access to requested sub-resources via subsequent auth filters.
       case AuthQuery(
-        AuthIdUser(_),
+        AuthIdIdentity(_),
         AuthActionRead,
         AuthResourceTable(Table(table, Schema("information_schema", Catalog("hive"))))
       ) if canReadInformationSchemaTable(table) => authQuery.allow()
 
       // Allow reading of metadata from the shared schemas
       case AuthQuery(
-        AuthIdUser(_),
+        AuthIdIdentity(_),
         AuthActionRead,
         AuthResourceSchema(schema)
       ) if isSharedSchema(schema) => authQuery.allow()
 
       // Allow CRUD operations against temporary tables in the shared schemas
       case AuthQuery(
-        AuthIdUser(_),
+        AuthIdIdentity(_),
         AuthActionCreate | AuthActionRead | AuthActionUpdate | AuthActionDelete,
         AuthResourceTable(table)
       ) if isSharedSchema(table) => authQuery.allow()
       case AuthQuery(
-        AuthIdUser(_),
+        AuthIdIdentity(_),
         AuthActionCreate | AuthActionRead | AuthActionUpdate | AuthActionDelete,
         AuthResourceColumn(column)
       ) if isSharedSchema(column) => authQuery.allow()
 
       // Allow read access to resources in the user's `<namespace>_<user>` schema
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionRead,
         AuthResourceSchema(Schema(schema, _))
       ) if (schema == s"${namespace}_${user}") => authQuery.allow()
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionRead,
         AuthResourceTable(Table(_, Schema(schema, _)))
       ) if (schema == s"${namespace}_${user}") => authQuery.allow()
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionRead,
         AuthResourceColumn(Column(_, Table(_, Schema(schema, _))))
       ) if (schema == s"${namespace}_${user}") => authQuery.allow()
@@ -194,16 +196,16 @@ class NamespacedAuth(val namespace: String) extends TrinoAuth {
 
       // Users may inspect query status and ownership of their own queries
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionRead,
-        AuthResourceQuery(XQuery(_, Some(AuthIdUser(owner))))
+        AuthResourceQuery(XQuery(_, Some(AuthIdIdentity(owner))))
       ) if user == owner => authQuery.allow()
 
       // Allow all users to cancel their own queries
       case AuthQuery(
-        AuthIdUser(user),
+        AuthIdIdentity(user),
         AuthActionDelete,
-        AuthResourceQuery(XQuery(_, Some(AuthIdUser(owner))))
+        AuthResourceQuery(XQuery(_, Some(AuthIdIdentity(owner))))
       ) if user == owner => authQuery.allow()
 
       // Allow execution of all functions
