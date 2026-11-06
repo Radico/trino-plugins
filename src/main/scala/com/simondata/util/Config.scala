@@ -100,12 +100,6 @@ object Config {
       .orElse(props.getToggle("events.log.query_failure"))
   }
 
-  val logSplitComplete: Option[Boolean] = {
-    env
-      .getToggle("TRINO_PLUGINS_LOG_SPLIT_COMPLETE")
-      .orElse(props.getToggle("events.log.split_complete"))
-  }
-
   val slackQueryCreated: Option[Boolean] = {
     env
       .getToggle("TRINO_PLUGINS_SLACK_QUERY_CREATED")
@@ -122,12 +116,6 @@ object Config {
     env
       .getToggle("TRINO_PLUGINS_SLACK_QUERY_FAILURE")
       .orElse(props.getToggle("events.slack.query_failure"))
-  }
-
-  val slackSplitComplete: Option[Boolean] = {
-    env
-      .getToggle("TRINO_PLUGINS_SLACK_SPLIT_COMPLETE")
-      .orElse(props.getToggle("events.slack.split_complete"))
   }
 
   def enforceAuth: Boolean = env

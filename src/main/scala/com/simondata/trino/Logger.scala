@@ -187,6 +187,6 @@ class Logger(identity: AuthId)(implicit pluginContext: PluginContext) {
 
 object Logger {
   def log(id: AuthId)(implicit pc: PluginContext): Logger = new Logger(id)
-  def log(id: Namespace)(implicit pc: PluginContext): Logger = new Logger(AuthIdUser(id.name))
+  def log(id: Namespace)(implicit pc: PluginContext): Logger = new Logger(AuthIdIdentity(id.name))
   def log(implicit pc: PluginContext): Logger = new Logger(AuthId.unknown)
 }

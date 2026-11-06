@@ -11,6 +11,8 @@ import java.lang.reflect.{Field, Method, Parameter}
 
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
+import scala.util.Try
+
 /**
  * A utility which will generate a report on the structure of
  * a class and its properties via reflection.
@@ -26,6 +28,12 @@ object XRay {
     val trace = state.getStackTrace
     val method = trace.lift(depth + 1)
     method.map(_.getMethodName)
+  }
+
+  def isMethodDeprecated(clazz: Class[_], methodName: String, parameterTypes: Class[_]*): Boolean = {
+    Try(clazz.getMethod(methodName, parameterTypes: _*))
+      .toOption
+      .exists(_.isAnnotationPresent(classOf[Deprecated]))
   }
 }
 
@@ -43,7 +51,9 @@ class MethodInfo(method: Method) {
   lazy val name: String = method.getName
   lazy val parameters: Seq[ParameterInfo] = method.getParameters.map(new ParameterInfo(_)).toSeq
   lazy val returnType: ClassInfo = ClassInfo.forClass(method.getReturnType)
-
+  lazy val isDeprecated: Boolean = method.getDeclaredAnnotations.exists( a => {
+    a.getClass == classOf[Deprecated]
+  })
   def asJson: JsValue = JsObject(Seq(
     "name" -> JsString(name),
     "parameters" -> JsArray(parameters.map(_.asJson)),

@@ -66,13 +66,13 @@ class NamespacedAuthSpec extends UnitSpec {
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session(Some("user")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session(Some("user")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session(Some("user")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session(Some("user")))
         ) {
           _.allow()
         }
@@ -83,7 +83,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetUser()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("user"), Some("bob")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("user"), Some("bob")))
         ) {
           _.allow()
         }
@@ -94,7 +94,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetUser()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bill"), AuthActionUpdate, session(Some("user"), Some("ted")))
+          AuthQuery(AuthIdIdentity("bill"), AuthActionUpdate, session(Some("identity"), Some("ted")))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -123,19 +123,19 @@ class NamespacedAuthSpec extends UnitSpec {
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session(Some("query_max_execution_time")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session(Some("query_max_execution_time")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session(Some("query_max_execution_time")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session(Some("query_max_execution_time")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("query_max_execution_time")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("query_max_execution_time")))
         ) {
           _.allow()
         }
@@ -164,19 +164,19 @@ class NamespacedAuthSpec extends UnitSpec {
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session(Some("query_max_stage_count")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session(Some("query_max_stage_count")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session(Some("query_max_stage_count")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session(Some("query_max_stage_count")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("query_max_stage_count")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("query_max_stage_count")))
         ) {
           _.allow()
         }
@@ -205,19 +205,19 @@ class NamespacedAuthSpec extends UnitSpec {
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session(Some("spill_enabled")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session(Some("spill_enabled")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session(Some("spill_enabled")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session(Some("spill_enabled")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("spill_enabled")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("spill_enabled")))
         ) {
           _.allow()
         }
@@ -246,19 +246,19 @@ class NamespacedAuthSpec extends UnitSpec {
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session(Some("spill_order_by")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session(Some("spill_order_by")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session(Some("spill_order_by")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session(Some("spill_order_by")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("spill_order_by")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("spill_order_by")))
         ) {
           _.allow()
         }
@@ -287,19 +287,19 @@ class NamespacedAuthSpec extends UnitSpec {
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session(Some("spill_window_operator")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session(Some("spill_window_operator")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session(Some("spill_window_operator")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session(Some("spill_window_operator")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("spill_window_operator")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("spill_window_operator")))
         ) {
           _.allow()
         }
@@ -310,13 +310,13 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetSystemSessionProperty()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, session())
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, session())
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, session())
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, session())
         ) {
           _.allow()
         }
@@ -339,19 +339,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetSystemSessionProperty()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session())
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session())
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("user")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("identity")))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionUpdate, session(Some("query_max_memory")))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionUpdate, session(Some("query_max_memory")))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -373,19 +373,19 @@ class NamespacedAuthSpec extends UnitSpec {
 
       "deny all actions for catalogs other than hive for non-admin users" in {
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, catalog("hill"))
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, catalog("hill"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, catalog("hill"))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, catalog("hill"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("boss"), AuthActionRead, catalog("hill"))
+          AuthQuery(AuthIdIdentity("boss"), AuthActionRead, catalog("hill"))
         ) {
           _.deny(TrinoAuth.messages.denyCatalog)
         }
@@ -453,13 +453,13 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("columns", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("columns", "information_schema", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, table("columns", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, table("columns", "information_schema", "hive"))
         ) {
           _.allow()
         }
@@ -470,13 +470,13 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("tables", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("tables", "information_schema", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, table("tables", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, table("tables", "information_schema", "hive"))
         ) {
           _.allow()
         }
@@ -487,13 +487,13 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("views", "information_schema", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, table("views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, table("views", "information_schema", "hive"))
         ) {
           _.allow()
         }
@@ -504,25 +504,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanGrantTablePrivilege()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("boss"), AuthActionGrant, catalog("hive"))
+          AuthQuery(AuthIdIdentity("boss"), AuthActionGrant, catalog("hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("boss"), AuthActionGrant, schema("information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("boss"), AuthActionGrant, schema("information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("boss"), AuthActionGrant, table("views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("boss"), AuthActionGrant, table("views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("boss"), AuthActionGrant, column("id", "views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("boss"), AuthActionGrant, column("id", "views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -533,19 +533,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("columns", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("columns", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, table("columns", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, table("columns", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, table("columns", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, table("columns", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -556,19 +556,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("tables", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("tables", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, table("tables", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, table("tables", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, table("tables", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, table("tables", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -582,37 +582,37 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanDropTable()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, table("views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, table("views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, table("views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, table("views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, column("id", "views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, column("id", "views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, column("id", "views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, column("id", "views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, column("id", "views", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, column("id", "views", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -623,31 +623,31 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("applicable_roles", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("applicable_roles", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("enabled_roles", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("enabled_roles", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("roles", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("roles", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("schemata", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("schemata", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("table_privileges", "information_schema", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("table_privileges", "information_schema", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -664,25 +664,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetTableComment()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, table("tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, table("tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, table("tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, table("tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
@@ -699,25 +699,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetTableComment()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, table("tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, table("tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, table("tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, table("tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
@@ -734,25 +734,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetTableComment()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, table("tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, table("tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, table("tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, table("tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, table("tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, table("tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -763,19 +763,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanShowCreateTable()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, schema("trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, schema("trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, schema("trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, schema("trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, schema("trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, schema("trino_shared", "hive"))
         ) {
           _.allow()
         }
@@ -787,25 +787,55 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetColumnComment()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, column("timestamp", "tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, column("timestamp", "tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "trino_shared", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "trino_shared", "hive"))
+        ) {
+          _.allow()
+        }
+      }
+
+      "allow all users to create temporary tables in schema hive.presto_export" in {
+        //sac.checkCanAddColumn()
+        //sac.checkCanDropColumn()
+        //sac.checkCanSetColumnComment()
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "presto_export", "hive"))
+        ) {
+          _.allow()
+        }
+
+        assertQueryResult(
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "presto_export", "hive"))
         ) {
           _.allow()
         }
@@ -817,25 +847,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetColumnComment()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "trino_shared_dev", "hive"))
         ) {
           _.allow()
         }
@@ -847,25 +877,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetColumnComment()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, column("timestamp", "tmp_ted", "trino_shared_other", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -877,19 +907,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetSchemaAuthorization()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, schema("trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, schema("trino_shared", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, schema("trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, schema("trino_shared", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, schema("trino_shared", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, schema("trino_shared", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -901,19 +931,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanSetSchemaAuthorization()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionCreate, schema("trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionCreate, schema("trino_shared_dev", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, schema("trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, schema("trino_shared_dev", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, schema("trino_shared_dev", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, schema("trino_shared_dev", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -924,7 +954,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterColumns()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("teds_table", s"${namespace}_ted", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("teds_table", s"${namespace}_ted", "hive"))
         ) {
           _.allow()
         }
@@ -936,7 +966,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.filterTables()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, table("teds_table", s"${namespace}_ned", "hive"))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, table("teds_table", s"${namespace}_ned", "hive"))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -962,7 +992,7 @@ class NamespacedAuthSpec extends UnitSpec {
 
     "filtering" should {
       "partition allowed/denied into complimentary sets" in {
-        val userRead = AuthQuery(AuthIdUser("bob"), AuthActionRead, catalog("hive"))
+        val userRead = AuthQuery(AuthIdIdentity("bob"), AuthActionRead, catalog("hive"))
         val anonRead = AuthQuery(AuthIdUnknown, AuthActionRead, catalog("hive"))
         val request = FilterRequest(AuthIdUnknown, userRead :: anonRead :: Nil)
 
@@ -973,8 +1003,8 @@ class NamespacedAuthSpec extends UnitSpec {
       }
 
       "have an empty denied set when all are allowed" in {
-        val readSchema = AuthQuery(AuthIdUser("bob"), AuthActionRead, schema(s"${namespace}_bob", "hive"))
-        val readTable = AuthQuery(AuthIdUser("bob"), AuthActionRead, schema(s"${namespace}_bob", "hive"))
+        val readSchema = AuthQuery(AuthIdIdentity("bob"), AuthActionRead, schema(s"${namespace}_bob", "hive"))
+        val readTable = AuthQuery(AuthIdIdentity("bob"), AuthActionRead, schema(s"${namespace}_bob", "hive"))
         val request = FilterRequest(AuthIdUnknown, readSchema :: readTable :: Nil)
 
         assertFilterResult(request)(
@@ -1000,7 +1030,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanViewQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.allow()
         }
@@ -1010,7 +1040,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanViewQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.allow()
         }
@@ -1020,7 +1050,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanViewQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.allow()
         }
@@ -1030,7 +1060,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanViewQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("bob"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("bob"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -1042,25 +1072,25 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanExecuteQuery()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(None, None)))
+          AuthQuery(AuthIdIdentity("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(None, None)))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(None, Some(AuthIdUser("root")))))
+          AuthQuery(AuthIdIdentity("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("root")))))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(Some("1"), None)))
+          AuthQuery(AuthIdIdentity("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(Some("1"), None)))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(Some("1"), Some(AuthIdUser("root")))))
+          AuthQuery(AuthIdIdentity("anybody"), AuthActionExecute, AuthResourceQuery(XQuery(Some("1"), Some(AuthIdIdentity("root")))))
         ) {
           _.allow()
         }
@@ -1073,19 +1103,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanKillQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("root")))))
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("root")))))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("admin")))))
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("admin")))))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.allow()
         }
@@ -1096,13 +1126,13 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanKillQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("admin")))))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("admin")))))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.allow()
         }
@@ -1113,7 +1143,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanKillQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("ted")))))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("ted")))))
         ) {
           _.allow()
         }
@@ -1124,7 +1154,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanKillQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("root")))))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("root")))))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -1135,19 +1165,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanKillQueryOwnedBy()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("root")))))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("root")))))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("admin")))))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("admin")))))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdUser("bob")))))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionDelete, AuthResourceQuery(XQuery(None, Some(AuthIdIdentity("bob")))))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -1159,19 +1189,19 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanExecuteFunction()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionExecute, AuthResourceFunction(XFunction("very_scary")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionExecute, AuthResourceFunction(XFunction("very_scary")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionExecute, AuthResourceFunction(XFunction("very_scary")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionExecute, AuthResourceFunction(XFunction("very_scary")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionExecute, AuthResourceFunction(XFunction("very_scary")))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionExecute, AuthResourceFunction(XFunction("very_scary")))
         ) {
           _.allow()
         }
@@ -1183,13 +1213,13 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanExecuteProcedure()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionExecute, AuthResourceProcedure(XProcedure("nothing_scary")))
+          AuthQuery(AuthIdIdentity("root"), AuthActionExecute, AuthResourceProcedure(XProcedure("nothing_scary")))
         ) {
           _.allow()
         }
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionExecute, AuthResourceProcedure(XProcedure("nothing_scary")))
+          AuthQuery(AuthIdIdentity("admin"), AuthActionExecute, AuthResourceProcedure(XProcedure("nothing_scary")))
         ) {
           _.allow()
         }
@@ -1199,7 +1229,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanExecuteProcedure()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionExecute, AuthResourceProcedure(XProcedure("nothing_scary")))
+          AuthQuery(AuthIdIdentity("ted"), AuthActionExecute, AuthResourceProcedure(XProcedure("nothing_scary")))
         ) {
           _.deny(TrinoAuth.messages.denyDefault)
         }
@@ -1211,7 +1241,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanReadSystemInformation()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionRead, AuthResourceSystemInfo)
+          AuthQuery(AuthIdIdentity("root"), AuthActionRead, AuthResourceSystemInfo)
         ) {
           _.allow()
         }
@@ -1221,7 +1251,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanWriteSystemInformation()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("root"), AuthActionUpdate, AuthResourceSystemInfo)
+          AuthQuery(AuthIdIdentity("root"), AuthActionUpdate, AuthResourceSystemInfo)
         ) {
           _.allow()
         }
@@ -1231,7 +1261,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanReadSystemInformation()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionRead, AuthResourceSystemInfo)
+          AuthQuery(AuthIdIdentity("admin"), AuthActionRead, AuthResourceSystemInfo)
         ) {
           _.allow()
         }
@@ -1241,7 +1271,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanWriteSystemInformation()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("admin"), AuthActionUpdate, AuthResourceSystemInfo)
+          AuthQuery(AuthIdIdentity("admin"), AuthActionUpdate, AuthResourceSystemInfo)
         ) {
           _.deny(TrinoAuth.messages.denyUpdateSystemInfo)
         }
@@ -1251,7 +1281,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanReadSystemInformation()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionRead, AuthResourceSystemInfo)
+          AuthQuery(AuthIdIdentity("ted"), AuthActionRead, AuthResourceSystemInfo)
         ) {
           _.deny(TrinoAuth.messages.denyUpdateSystemInfo)
         }
@@ -1261,7 +1291,7 @@ class NamespacedAuthSpec extends UnitSpec {
         //sac.checkCanWriteSystemInformation()
 
         assertQueryResult(
-          AuthQuery(AuthIdUser("ted"), AuthActionUpdate, AuthResourceSystemInfo)
+          AuthQuery(AuthIdIdentity("ted"), AuthActionUpdate, AuthResourceSystemInfo)
         ) {
           _.deny(TrinoAuth.messages.denyUpdateSystemInfo)
         }

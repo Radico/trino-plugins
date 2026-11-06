@@ -49,7 +49,7 @@ public class TrinoPlugins implements Plugin {
             return AuthPlugin.name();
         }
 
-        public SystemAccessControl create(Map<String, String> config) {
+        public SystemAccessControl create(Map<String, String> config, SystemAccessControlFactory.SystemAccessControlContext context) {
             this.init();
 
             // NOTE: Set this to your custom TrinoAuth implementation
@@ -68,7 +68,7 @@ public class TrinoPlugins implements Plugin {
             return EventsPlugin.name();
         }
 
-        public EventListener create(Map<String, String> config) {
+        public EventListener create(Map<String, String> config, EventListenerFactory.EventListenerContext context) {
             this.init();
 
             // NOTE: Specify all custom QueryEventsListener implementations in

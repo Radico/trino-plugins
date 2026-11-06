@@ -161,10 +161,6 @@ When disabled, it will neither log to disk nor to Slack (or any other custom aux
 - `TRINO_PLUGINS_LOG_QUERY_FAILURE`
 - `events.log.query_failure`
 
-### Log each split completion (boolean = false)
-- `TRINO_PLUGINS_LOG_SPLIT_COMPLETE`
-- `events.log.split_complete`
-
 ### Send a Slack message for each created query (boolean = false)
 - `TRINO_PLUGINS_SLACK_QUERY_CREATED`
 - `events.slack.query_created`
@@ -176,10 +172,6 @@ When disabled, it will neither log to disk nor to Slack (or any other custom aux
 ### Send a Slack message for each failed query run (boolean = true)
 - `TRINO_PLUGINS_SLACK_QUERY_FAILURE`
 - `events.slack.query_failure`
-
-### Send a Slack message for each split completion (boolean = false)
-- `TRINO_PLUGINS_SLACK_SPLIT_COMPLETE`
-- `events.slack.split_complete`
 
 ### Enforce auth (boolean = true)
 - `TRINO_PLUGINS_ENFORCE_AUTH`
