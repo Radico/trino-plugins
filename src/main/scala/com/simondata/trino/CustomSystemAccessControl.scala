@@ -763,14 +763,6 @@ class CustomSystemAccessControl(auth: TrinoAuth) extends SystemAccessControl {
     }
   }
 
-  override def checkCanSetSystemSessionProperty(identity: Identity, propertyName: String): Unit = {
-    evaluateAuthQuery(
-      AuthQuery(AuthId.of(identity), AuthActionUpdate, AuthResourceSession(Session(Some(propertyName))))
-    ) {
-      denySetSystemSessionProperty(propertyName)
-    }
-  }
-
   override def canAccessCatalog(context: SystemSecurityContext, catalogName: String): Boolean = {
     evaluateAuthQuery(
       AuthQuery(AuthId.of(context), AuthActionRead, AuthResourceCatalog(Catalog(catalogName)))

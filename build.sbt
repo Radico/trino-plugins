@@ -1,7 +1,7 @@
 //version := "1.0"
 
 val projectName = "trino-plugins"
-val trinoVersion = "445"
+val trinoVersion = "482"
 
 // Should the com.simondata.trino.Run object be exported in the jar?
 val addEntryPoint = true
@@ -12,7 +12,7 @@ name := projectName
 version := trinoVersion
 
 //scalaVersion := "3.4.2"
-scalaVersion := "2.13.14"
+scalaVersion := "2.13.16"
 
 // https://mvnrepository.com/artifact/io.trino/trino-spi
 if (addEntryPoint) {
@@ -36,9 +36,9 @@ Test / logBuffered := false
 // The single Java source acts as the entry point for our plugin
 compileOrder := CompileOrder.ScalaThenJava
 
-// Target Java SE 11
-scalacOptions += "-target:jvm-21"
-javacOptions ++= Seq("-source", "21", "-target", "21", "-Xlint")
+// Target Java SE 25 (Scala 2.13.16 can emit bytecode up to 24 only; it runs unchanged on 25)
+scalacOptions += "-release:24"
+javacOptions ++= Seq("--release", "25", "-Xlint")
 
 val dateTime = {
   import java.util.{Date, TimeZone}
@@ -78,7 +78,7 @@ assembly / assemblyMergeStrategy := {
 }
 
 // Do not include the LicenseManager (required during compile only, supplied by Starburst)
-mappings in (Compile, packageBin) ~= { (ms: Seq[(File, String)]) =>
+Compile / packageBin / mappings ~= { (ms: Seq[(File, String)]) =>
   ms filter { case (_, toPath) =>
     (addEntryPoint, toPath) match {
       case (false, "com/simondata/trino/Run.class") => false
